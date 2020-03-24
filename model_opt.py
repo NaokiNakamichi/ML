@@ -20,28 +20,24 @@ class Bohachevsky(models.Model):
 
     def g_opt(self,w):
         w =  np.array(w)
-        w1,w2 = w[0],w[1]
-        g_w1 = 2 * w1 + 0.9 * np.pi * np.sin(3 * np.pi * w1)
-        g_w2 = 4 * w2 + 1.6 * np.pi * np.sin(4 * np.pi * w2)
-        dim = w.ndim
-        shape = w.shape
-        if dim == 0:
-            g_w1 = g_w1 + self.err * np.random.randn(1)
-            g_w2 = g_w2 + self.err * np.random.randn(1)
+        if w.ndim == 1:
+            w1,w2 = w[0],w[1]
+            g_w1 = 2 * w1 + 0.9 * np.pi * np.sin(3 * np.pi * w1)
+            g_w2 = 4 * w2 + 1.6 * np.pi * np.sin(4 * np.pi * w2)
             g = np.array([g_w1,g_w2])
             return g
-
-        elif dim == 1:
-            g_w1 = g_w1 + self.err * np.random.randn(1)
-            g_w2 = g_w2 + self.err * np.random.randn(1)
-            g = np.array([g_w1,g_w2]).flatten()
-            return g
-
         else:
-            g_w1 = g_w1 + self.err * np.random.randn(g_w1.shape[0],g_w1.shape[1])
-            g_w2 = g_w2 + self.err * np.random.randn(g_w1.shape[0],g_w1.shape[1])
+            w = w.T
+            w1,w2 = w[0],w[1]
+            g_w1 = 2 * w1 + 0.9 * np.pi * np.sin(3 * np.pi * w1)
+            g_w1 = np.mean(g_w1)
+            g_w2 = 4 * w2 + 1.6 * np.pi * np.sin(4 * np.pi * w2)
+            g_w2 = np.mean(g_w2)
             g = np.array([g_w1,g_w2])
             return g
+
+
+
 
 class Perm(models.Model):
     def __init__(self, name="Perm",err=0.0):
@@ -59,4 +55,17 @@ class Perm(models.Model):
         return tmp
 
     def g_opt(self,w,b):
-        w = 
+        w = np.array(w)
+        d = w.shape[0]
+
+        print(w)
+        print(d)
+        tmp = np.zeros(w.shape)
+        print(tmp)
+        for i in list(range(d)):
+            for j in list(range(d)):
+                for k in list(range(d)):
+                    s = (j + 1 + b) * (2 * (w[j] ** i)) * (w[k] ** (i + 1) - (1 / (j + 1) ** (i + 1)))
+                    tmp[j] += s
+
+        return tmp
