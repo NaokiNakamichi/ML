@@ -82,3 +82,11 @@ class RotatedHyperEllipsoid(models.Model):
         for i in range(d):
             tmp += np.sum(w[:i + 1] ** 2,axis=0)
         return tmp[0]
+
+    def g_opt(self,w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(d):
+            tmp[i] += np.sum(2 * w[:i + 1],axis=0)
+        return tmp
