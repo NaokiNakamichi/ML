@@ -69,3 +69,16 @@ class Perm(models.Model):
                     tmp[j] += s
 
         return tmp
+
+class RotatedHyperEllipsoid(models.Model):
+    def __init__(self, name="ROTATED HYPER-ELLIPSOID",err=0.0):
+        super(RotatedHyperEllipsoid, self).__init__(name=name)
+        self.err = err
+
+    def f_opt(self, w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(d):
+            tmp += np.sum(w[:i + 1] ** 2,axis=0)
+        return tmp[0]
