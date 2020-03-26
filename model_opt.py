@@ -133,6 +133,29 @@ class SumOfDifferent(models.Model):
         d = w.shape[0]
         tmp = np.zeros(w.shape)
         for i in range(d):
-            tmp[i] =  (i + 2) * np.abs(w[i]) ** (i + 1)
+            tmp[i] =  (i + 2) * (np.abs(w[i]) ** (i + 1))
+
+        return tmp
+
+class SumSquares(models.Model):
+    def __init__(self, name="Sum Squares",err=0.0):
+        super(SumSquares, self).__init__(name=name)
+        self.err = err
+
+    def f_opt(self,w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(d):
+            tmp += (i + 1) * (w[i] ** 2)
+
+        return tmp[0]
+
+    def g_opt(self,w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(d):
+            tmp[i] = 2 * (i + 1) * (w[i])
 
         return tmp
