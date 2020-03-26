@@ -90,3 +90,26 @@ class RotatedHyperEllipsoid(models.Model):
         for i in range(d):
             tmp[i] += np.sum(2 * w[:i + 1],axis=0)
         return tmp
+
+class Sphere(models.Model):
+    def __init__(self, name="Sphere",err=0.0):
+        super(Sphere, self).__init__(name=name)
+        self.err = err
+
+    def f_opt(self, w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(d):
+            tmp += w[i] ** 2
+
+        return tmp[0]
+
+    def g_opt(self,w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(d):
+            tmp[i] = 2 * w[i]
+
+        return tmp
