@@ -113,3 +113,26 @@ class Sphere(models.Model):
             tmp[i] = 2 * w[i]
 
         return tmp
+
+class SumOfDifferent(models.Model):
+    def __init__(self, name="SumOfDifferent",err=0.0):
+        super(SumOfDifferent, self).__init__(name=name)
+        self.err = err
+
+    def f_opt(self,w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(d):
+            tmp += np.abs(w[i]) ** (i + 2)
+
+        return tmp[0]
+
+    def g_opt(self,w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(d):
+            tmp[i] =  (i + 2) * np.abs(w[i]) ** (i + 1)
+
+        return tmp
