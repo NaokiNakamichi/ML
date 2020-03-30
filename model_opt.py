@@ -191,3 +191,18 @@ class Trid(models.Model):
                 tmp[i] = 2 * (w[i] - 1) - (w[i-1] + w[i+1])
 
         return tmp
+
+class ThreeHumpCamel(models.Model):
+    def __init__(self, name="Three-Hump Camel",err=0.0):
+        super(ThreeHumpCamel, self).__init__(name=name)
+        self.err = err
+
+    def f_opt(self,w):
+        w1,w2 = w[0],w[1]
+        return 2 * w1 ** 2 - 1.05 * w1 ** 4 + (w1 ** 6) / 6 + w1 * w2 + w2 ** 2
+
+    def g_opt(self,w):
+        w1,w2 = w[0],w[1]
+        tmp_1 = 4 * w1 - 4.2 * w1 ** 3 + w1 ** 5 + w2
+        tmp_2 = w1 + 2 * w2
+        return [tmp_1,tmp_2]
