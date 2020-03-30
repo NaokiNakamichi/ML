@@ -159,3 +159,35 @@ class SumSquares(models.Model):
             tmp[i] = 2 * (i + 1) * (w[i])
 
         return tmp
+
+class Trid(models.Model):
+    def __init__(self, name="trid",err=0.0):
+        super(Trid, self).__init__(name=name)
+        self.err = err
+
+    def f_opt(self,w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp_1 = np.zeros(w.shape)
+        tmp_2 = np.zeros(w.shape)
+        for i in range(d):
+            tmp_1 += (w[i] - 1) ** 2
+        for i in range(1,d):
+            tmp_2 += w[i] * w[i-1]
+        tmp = tmp_1 - tmp_2
+
+        return tmp[0]
+
+    def g_opt(self,w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(d):
+            if i == 0:
+                tmp[i] = 2 * (w[i] - 1) - w[i+1]
+            elif i == d-1:
+                tmp[i] = 2 * (w[i] - 1) - w[i-1]
+            else:
+                tmp[i] = 2 * (w[i] - 1) - (w[i-1] + w[i+1])
+
+        return tmp
