@@ -206,3 +206,18 @@ class ThreeHumpCamel(models.Model):
         tmp_1 = 4 * w1 - 4.2 * w1 ** 3 + w1 ** 5 + w2
         tmp_2 = w1 + 2 * w2
         return [tmp_1,tmp_2]
+
+class SixHumpCamel(models.Model):
+    def __init__(self, name="Six-Hump Camel",err=0.0):
+        super(SixHumpCamel, self).__init__(name=name)
+        self.err = err
+
+    def f_opt(self,w):
+        w1,w2 = w[0],w[1]
+        return (4 - 2.1 * (w1 ** 2) + (w1 ** 4) / 3 ) * (w1 ** 2) + w1 * w2 + (-4 + 4 * (w2 ** 2)) * (w2 ** 2)
+
+    def g_opt(self,w):
+        w1,w2 = w[0],w[1]
+        tmp_1 = 8 * w1 - 8.4 * (w1 ** 3) + 2 * (w1 ** 5) + w2
+        tmp_2 = w1 - 8 * w2 + 16 * (w2 ** 3)
+        return [tmp_1,tmp_2]
