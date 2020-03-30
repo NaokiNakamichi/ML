@@ -221,3 +221,31 @@ class SixHumpCamel(models.Model):
         tmp_1 = 8 * w1 - 8.4 * (w1 ** 3) + 2 * (w1 ** 5) + w2
         tmp_2 = w1 - 8 * w2 + 16 * (w2 ** 3)
         return [tmp_1,tmp_2]
+
+class DixonPrice(models.Model):
+    def __init__(self, name="Dixon-Price",err=0.0):
+        super(DixonPrice, self).__init__(name=name)
+        self.err = err
+
+    def f_opt(self,w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(1,d):
+            tmp += (i+1) * (2 * w[i] ** 2  - w[i-1]) ** 2
+        tmp += (w[0]-1) ** 2
+        return tmp[0]
+
+    def g_opt(self,w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(1,d):
+            if i == 0:
+                tmp[i] = 2 * (w[0] - 1) + 2 * 2 * (2 * w[1] ** 2 - w[0])
+            elif i == d-1:
+                tmp[i] = 8 * w[i] * d * (i + 1) * (2 * w[i] ** 2 - w[i-1])
+            else:
+                tmp[i] =  8 * w[i] * d * (i + 1) * (2 * w[i] ** 2 - w[i-1]) - (i + 2) * 2 * (2 * w[i+1] ** 2 - w[i])
+
+        return tmp
