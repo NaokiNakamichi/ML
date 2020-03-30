@@ -234,18 +234,49 @@ class DixonPrice(models.Model):
         for i in range(1,d):
             tmp += (i+1) * (2 * w[i] ** 2  - w[i-1]) ** 2
         tmp += (w[0]-1) ** 2
+
         return tmp[0]
 
     def g_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
         tmp = np.zeros(w.shape)
-        for i in range(1,d):
+        for i in range(d):
             if i == 0:
-                tmp[i] = 2 * (w[0] - 1) + 2 * 2 * (2 * w[1] ** 2 - w[0])
+                tmp[i] = 2 * (w[i] - 1) + 2 * 2 * (2 * w[i+1] ** 2 - w[i])
             elif i == d-1:
                 tmp[i] = 8 * w[i] * d * (i + 1) * (2 * w[i] ** 2 - w[i-1])
             else:
                 tmp[i] =  8 * w[i] * d * (i + 1) * (2 * w[i] ** 2 - w[i-1]) - (i + 2) * 2 * (2 * w[i+1] ** 2 - w[i])
+
+        return tmp
+
+
+class RosenBrock(models.Model):
+    def __init__(self, name="RosenBrock",err=0.0):
+        super(RosenBrock, self).__init__(name=name)
+        self.err = err
+
+    def f_opt(self,w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(0, d - 1):
+            tmp_1 = 100 * (w[i+1] - w[i] ** 2) ** 2
+            tmp_2 = (w[i] -1) ** 2
+            tmp += tmp_1 + tmp_2
+        return tmp[0]
+
+    def g_opt(self,w):
+        w = np.array(w)
+        d = w.shape[0]
+        tmp = np.zeros(w.shape)
+        for i in range(d):
+            if i == 0:
+                tmp[i] = 100 * (-4) * w[i] * (w[i+1] - w[i] ** 2) + 2 * (w[i] - 1)
+            elif i == d-1:
+                tmp[i] = 100 * 2 * (w[i] - w[i-1] ** 2)
+            else:
+                tmp[i] = 100 * (-4) * w[i] * (w[i+1] - w[i] ** 2) + 2 * (w[i] - 1) + 100 * 2 * (w[i] - w[i-1] ** 2)
 
         return tmp
