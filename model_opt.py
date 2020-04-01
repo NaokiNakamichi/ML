@@ -3,10 +3,12 @@ import numpy as np
 import models
 
 class Bohachevsky(models.Model):
+    # minimum (0,0)
 
     def __init__(self, name="Bohachevsky",err=0.0):
         super(Bohachevsky, self).__init__(name=name)
         self.err = err
+        self.w_star = np.array([0,0])
 
     def f_opt(self,w):
         w =  np.array(w)
