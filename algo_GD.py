@@ -9,6 +9,7 @@ class GD:
         self.wstore = []
         self.w_mean = []
         self.loss_store = []
+        self.f_store = []
 
     def __iter__(self):
         return self
@@ -22,20 +23,22 @@ class GD:
             tmp = np.sum(self.wstore,axis=0)/self.t
             self.w_mean.append(tmp)
 
+
     def update(self,model,data=None,a=0.1):
         if data is not None:
             grad = a * model.g_opt(w = data)
         else:
             grad = a * model.g_opt(w = self.w)
+            loss = np.sum((model.w_star - self.w) ** 2)
+            self.loss_store.append(loss)
+            self.f_store.append(model.f_opt(self.w))
 
         if model.err != 0:
             grad = model.add_noise(grad)
 
+
         self.w = self.w - a * grad
 
-    def quadratic_loss(self,model,w):
-        loss = np.sum((model.w_star - w) ** 2)
-        return loss  
 
 
 
