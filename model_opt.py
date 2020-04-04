@@ -2,6 +2,7 @@ import numpy as np
 
 import models
 
+
 class Bohachevsky(models.Model):
     # minimum (0,0)
 
@@ -15,61 +16,56 @@ class Bohachevsky(models.Model):
         w1,w2 = w[0],w[1]
         f = w1 ** 2 + 2 * w2 ** 2 - 0.3 * np.cos(3 * np.pi * w1) - 0.4 * np.cos(4* np.pi * w2) + 0.7
         dim = f.shape
-        if dim:
-            return  f + self.err * np.random.randn(dim[0],dim[1])
-        else:
-            return  f + self.err * np.random.randn(1)
+        if self.err != 0:
+            f = f + self.err * np.random.randn(1)
+        return f
 
     def g_opt(self,w):
         w =  np.array(w)
-        if w.ndim == 1:
-            w1,w2 = w[0],w[1]
-            g_w1 = 2 * w1 + 0.9 * np.pi * np.sin(3 * np.pi * w1)
-            g_w2 = 4 * w2 + 1.6 * np.pi * np.sin(4 * np.pi * w2)
-            g = np.array([g_w1,g_w2])
-            return g
-        else:
-            w = w.T
-            w1,w2 = w[0],w[1]
-            g_w1 = 2 * w1 + 0.9 * np.pi * np.sin(3 * np.pi * w1)
-            g_w1 = np.mean(g_w1)
-            g_w2 = 4 * w2 + 1.6 * np.pi * np.sin(4 * np.pi * w2)
-            g_w2 = np.mean(g_w2)
-            g = np.array([g_w1,g_w2])
-            return g
+        w1,w2 = w[0],w[1]
+        g_w1 = 2 * w1 + 0.9 * np.pi * np.sin(3 * np.pi * w1)
+        g_w2 = 4 * w2 + 1.6 * np.pi * np.sin(4 * np.pi * w2)
+        g = np.array([g_w1,g_w2])
+        if self.err != 0:
+            g = g + self.err * np.random.randn(2)
+        return g
+
 
 
 
 
 class Perm(models.Model):
-    def __init__(self, name="Perm",err=0.0):
+    def __init__(self, name="Perm",err=0.0,b=0.001):
         super(Perm, self).__init__(name=name)
+        self.w_star = np.array([1,0.5])
         self.err = err
+        self.b = b
 
-    def f_opt(self,w,b):
+    def f_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
         tmp = 0
         for i in list(range(d)):
             for j in list(range(d)):
-                tmp += ((j + 1 + b) * (w[j] ** (i + 1) - (1 / (j + 1) ** (i + 1)))) ** 2
+                tmp += ((j + 1 + self.b) * (w[j] ** (i + 1) - (1 / (j + 1) ** (i + 1)))) ** 2
+
+        if self.err != 0:
+            tmp = tmp + self.err * np.random.randn(1)
 
         return tmp
 
-    def g_opt(self,w,b):
+    def g_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
-
-        print(w)
-        print(d)
         tmp = np.zeros(w.shape)
-        print(tmp)
         for i in list(range(d)):
             for j in list(range(d)):
                 for k in list(range(d)):
-                    s = (j + 1 + b) * (2 * (w[j] ** i)) * (w[k] ** (i + 1) - (1 / (j + 1) ** (i + 1)))
+                    s = (j + 1 + self.b) * (2 * (w[j] ** i)) * (w[k] ** (i + 1) - (1 / (j + 1) ** (i + 1)))
                     tmp[j] += s
 
+        if self.err != 0:
+            tmp = tmp + self.err * np.random.randn(d)
         return tmp
 
 class RotatedHyperEllipsoid(models.Model):
