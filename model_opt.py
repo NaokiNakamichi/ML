@@ -72,6 +72,7 @@ class RotatedHyperEllipsoid(models.Model):
     def __init__(self, name="ROTATED HYPER-ELLIPSOID",err=0.0):
         super(RotatedHyperEllipsoid, self).__init__(name=name)
         self.err = err
+        self.w_star = np.array([0,0])
 
     def f_opt(self, w):
         w = np.array(w)
@@ -79,6 +80,8 @@ class RotatedHyperEllipsoid(models.Model):
         tmp = np.zeros(w.shape)
         for i in range(d):
             tmp += np.sum(w[:i + 1] ** 2,axis=0)
+        if self.err != 0:
+            tmp = tmp + self.err * np.random.randn(1)
         return tmp[0]
 
     def g_opt(self,w):
@@ -87,6 +90,9 @@ class RotatedHyperEllipsoid(models.Model):
         tmp = np.zeros(w.shape)
         for i in range(d):
             tmp[i] += np.sum(2 * w[:i + 1],axis=0)
+
+        if self.err != 0:
+            tmp = tmp + self.err * np.random.randn(1)
         return tmp
 
 class Sphere(models.Model):
