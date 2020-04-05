@@ -44,6 +44,12 @@ class Perm(models.Model):
     def f_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
+        minmun = 1
+        self.w_star = []
+        for i in range(d):
+            self.w_star.append((minmun / (i + 1)))
+        self.w_star = np.array(self.w_star)
+
         tmp = 0
         for i in list(range(d)):
             for j in list(range(d)):
@@ -57,6 +63,11 @@ class Perm(models.Model):
     def g_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
+        minmun = 1
+        self.w_star = []
+        for i in range(d):
+            self.w_star.append((minmun / (i + 1)))
+        self.w_star = np.array(self.w_star)
         tmp = np.zeros(w.shape)
         for i in list(range(d)):
             for j in list(range(d)):
@@ -77,6 +88,7 @@ class RotatedHyperEllipsoid(models.Model):
     def f_opt(self, w):
         w = np.array(w)
         d = w.shape[0]
+        self.w_star = np.zeros(d)
         tmp = np.zeros(w.shape)
         for i in range(d):
             tmp += np.sum(w[:i + 1] ** 2,axis=0)
@@ -87,6 +99,7 @@ class RotatedHyperEllipsoid(models.Model):
     def g_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
+        self.w_star = np.zeros(d)
         tmp = np.zeros(w.shape)
         for i in range(d):
             tmp[i] += np.sum(2 * w[:i + 1],axis=0)
@@ -99,22 +112,31 @@ class Sphere(models.Model):
     def __init__(self, name="Sphere",err=0.0):
         super(Sphere, self).__init__(name=name)
         self.err = err
+        self.w_star = np.array([0,0])
 
     def f_opt(self, w):
         w = np.array(w)
         d = w.shape[0]
+        self.w_star = np.zeros(d)
         tmp = np.zeros(w.shape)
         for i in range(d):
             tmp += w[i] ** 2
+
+        if self.err != 0:
+            tmp = tmp + self.err * np.random.randn(1)
 
         return tmp[0]
 
     def g_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
+        self.w_star = np.zeros(d)
         tmp = np.zeros(w.shape)
         for i in range(d):
             tmp[i] = 2 * w[i]
+
+        if self.err != 0:
+            tmp = tmp + self.err * np.random.randn(1)
 
         return tmp
 
@@ -122,22 +144,31 @@ class SumOfDifferent(models.Model):
     def __init__(self, name="SumOfDifferent",err=0.0):
         super(SumOfDifferent, self).__init__(name=name)
         self.err = err
+        self.w_star = np.array([0,0])
 
     def f_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
+        self.w_star = np.zeros(d)
         tmp = np.zeros(w.shape)
         for i in range(d):
             tmp += np.abs(w[i]) ** (i + 2)
+
+        if self.err != 0:
+            tmp = tmp + self.err * np.random.randn(1)
 
         return tmp[0]
 
     def g_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
+        self.w_star = np.zeros(d)
         tmp = np.zeros(w.shape)
         for i in range(d):
             tmp[i] =  (i + 2) * (np.abs(w[i]) ** (i + 1))
+
+        if self.err != 0:
+            tmp = tmp + self.err * np.random.randn(1)
 
         return tmp
 
@@ -145,22 +176,31 @@ class SumSquares(models.Model):
     def __init__(self, name="Sum Squares",err=0.0):
         super(SumSquares, self).__init__(name=name)
         self.err = err
+        self.w_star = np.array([0,0])
 
     def f_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
+        self.w_star = np.zeros(d)
         tmp = np.zeros(w.shape)
         for i in range(d):
             tmp += (i + 1) * (w[i] ** 2)
+
+        if self.err != 0:
+            tmp = tmp + self.err * np.random.randn(1)
 
         return tmp[0]
 
     def g_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
+        self.w_star = np.zeros(d)
         tmp = np.zeros(w.shape)
         for i in range(d):
             tmp[i] = 2 * (i + 1) * (w[i])
+
+        if self.err != 0:
+            tmp = tmp + self.err * np.random.randn(1)
 
         return tmp
 
