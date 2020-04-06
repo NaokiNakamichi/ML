@@ -44,10 +44,9 @@ class Perm(models.Model):
     def f_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
-        minimum = 1
-        self.w_star = [1]
-        for i in range(d-1):
-            self.w_star.append((minimum / 2))
+        self.w_star = []
+        for i in range(d):
+            self.w_star.append(1 / (i + 1))
         self.w_star = np.array(self.w_star)
 
         tmp = 0
@@ -63,10 +62,9 @@ class Perm(models.Model):
     def g_opt(self,w):
         w = np.array(w)
         d = w.shape[0]
-        minimum = 1
-        self.w_star = [1]
-        for i in range(d-1):
-            self.w_star.append((minimum / 2))
+        self.w_star = []
+        for i in range(d):
+            self.w_star.append(1 / (i + 1))
         self.w_star = np.array(self.w_star)
         tmp = np.zeros(w.shape)
         for i in list(range(d)):
@@ -302,7 +300,7 @@ class DixonPrice(models.Model):
     def __init__(self, name="Dixon-Price",err=0.0):
         super(DixonPrice, self).__init__(name=name)
         self.err = err
-        self.w_star = np.array([0, 2 ** (-1/2)])
+        self.w_star = np.array([1, 2 ** (-1/2)])
 
     def f_opt(self,w):
         w = np.array(w)
