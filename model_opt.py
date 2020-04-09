@@ -70,7 +70,7 @@ class Perm(models.Model):
         for i in list(range(d)):
             for j in list(range(d)):
                 for k in list(range(d)):
-                    s = (j + 1 + self.b) * (2 * (w[j] ** i)) * (w[k] ** (i + 1) - (1 / (j + 1) ** (i + 1)))
+                    s = (j + 1 + self.b) * (2 * (i+1) * (w[j] ** (i))) * (w[k] ** (i + 1) - (1 / (j + 1) ** (i + 1)))
                     tmp[j] += s
 
         if self.err != 0:
@@ -293,7 +293,7 @@ class SixHumpCamel(models.Model):
         tmp_2 = w1 - 8 * w2 + 16 * (w2 ** 3)
         tmp = np.array([tmp_1,tmp_2])
         if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(2)
+            tmp = tmp + self.err * np.random.randn(1)
         return tmp
 
 class DixonPrice(models.Model):
@@ -331,7 +331,7 @@ class DixonPrice(models.Model):
         tmp = np.zeros(w.shape)
         for i in range(d):
             if i == 0:
-                tmp[i] = 2 * (w[i] - 1) + 2 * 2 * (2 * w[i+1] ** 2 - w[i])
+                tmp[i] = 2 * (w[i] - 1) - 2 * 2 * (2 * w[i+1] ** 2 - w[i])
             elif i == d-1:
                 tmp[i] = 8 * w[i] * d * (i + 1) * (2 * w[i] ** 2 - w[i-1])
             else:
@@ -381,3 +381,13 @@ class RosenBrock(models.Model):
             tmp = tmp + self.err * np.random.randn(1)
 
         return tmp
+
+class Quadratic(models.Model):
+    def __init__(self,name="Quadratic",err=0.0):
+        super(Quadratic, self).__init__(name=name)
+
+    def f_opt(self,w):
+        return w**2
+
+    def g_opt(self,w):
+        return 2 * w

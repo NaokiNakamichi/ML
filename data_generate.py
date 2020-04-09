@@ -7,9 +7,8 @@ class Data:
         self.N = N
         self.err = err
 
-    def generate_data(self):
-        w = np.ones(self.d) / self.d
+    def generate_linear(self):
+        w_star = np.ones(self.d) / self.d
         X = np.random.randn(self.N, self.d)
-        y = X.dot(w) + self.err * np.random.randn(self.N)
-        init_w = w + np.random.randn(self.d)
-        return X,y,init_w,w
+        y = X.dot(w_star) + self.err * np.random.randn(self.N)
+        return X,y,w_star

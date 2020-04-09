@@ -31,6 +31,6 @@ class LineSearch(Iterative):
         self.a = a
 
 
-    def update(self,model,data=None):
-        newdir = self.newdir(model=model, data=data)
+    def update(self,model,data=None,label=None):
+        newdir = self.newdir(model=model, data=data, label=label)
         self.w = self.w - self.a * newdir
