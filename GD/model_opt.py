@@ -33,7 +33,7 @@ class Bohachevsky(models.Model):
 
 
 
-
+# TODO: Perm関数　SGDがうまく収束していない、勾配がうまく実装できてない可能性。
 class Perm(models.Model):
     def __init__(self, name="Perm",err=0.0,b=0.001):
         super(Perm, self).__init__(name=name)

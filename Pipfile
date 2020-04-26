@@ -10,6 +10,9 @@ numpy = "*"
 matplotlib = "*"
 jupyter = "*"
 tqdm = "*"
+jupyter-contrib-nbextensions = "*"
+jupyter-nbextensions-configurator = "*"
+multiprocessing = "*"
 
 [requires]
 python_version = "3.7"
