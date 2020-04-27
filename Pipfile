@@ -13,6 +13,7 @@ tqdm = "*"
 jupyter-contrib-nbextensions = "*"
 jupyter-nbextensions-configurator = "*"
 multiprocessing = "*"
+jupyterlab = "*"
 
 [requires]
 python_version = "3.7"
