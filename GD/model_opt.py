@@ -358,9 +358,9 @@ class RosenBrock(models.Model):
             tmp_2 = (w[i] -1) ** 2
             tmp = tmp_1 + tmp_2
 
-        k = tmp + self.err * (np.random.random_sample(tmp.shape) * random.random())
+        tmp = tmp + self.add_noise(tmp)
 
-        return k
+        return tmp
 
     def g_opt(self,w):
         w = np.array(w)
@@ -375,7 +375,7 @@ class RosenBrock(models.Model):
             else:
                 tmp[i] = 100 * (-4) * w[i] * (w[i+1] - w[i] ** 2) + 2 * (w[i] - 1) + 100 * 2 * (w[i] - w[i-1] ** 2)
 
-        tmp = tmp + self.err * (np.random.random_sample(tmp.shape) * random.random())
+        tmp = tmp + self.add_noise(tmp)
 
         return tmp
 

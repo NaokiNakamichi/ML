@@ -8,11 +8,4 @@ class Model():
         self.err = err
 
     def add_noise(self,w):
-        d = w.shape[0]
-        random_err = []
-        for i in range(d):
-            random_err.append(random.random())
-
-        err = np.array(random_err) * np.random.randn(d)
-
-        return w + self.err * err
+        return self.err * (np.random.random_sample(w.shape) * random.random())
