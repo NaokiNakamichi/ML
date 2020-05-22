@@ -185,7 +185,7 @@ class SumSquares(models.Model):
             tmp += (i + 1) * (w[i] ** 2)
 
         if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
+            tmp = tmp + self.add_noise(tmp)
 
         return tmp[0]
 
@@ -198,7 +198,7 @@ class SumSquares(models.Model):
             tmp[i] = 2 * (i + 1) * (w[i])
 
         if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
+            tmp = tmp + self.add_noise(tmp)
 
         return tmp
 
@@ -226,7 +226,7 @@ class Trid(models.Model):
         tmp = tmp_1 - tmp_2
 
         if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
+            tmp = tmp + self.add_noise(tmp)
 
         return tmp[0]
 
@@ -248,7 +248,7 @@ class Trid(models.Model):
                 tmp[i] = 2 * (w[i] - 1) - (w[i-1] + w[i+1])
 
         if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
+            tmp = tmp + self.add_noise(tmp)
 
         return tmp
 
