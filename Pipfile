@@ -10,9 +10,7 @@ numpy = "*"
 matplotlib = "*"
 jupyter = "*"
 tqdm = "*"
-jupyter-contrib-nbextensions = "*"
-jupyter-nbextensions-configurator = "*"
-multiprocessing = "*"
+pandas = "*"
 jupyterlab = "*"
 
 [requires]
