@@ -344,8 +344,8 @@ class DixonPrice(models.Model):
 
 
 class RosenBrock(models.Model):
-    def __init__(self, name="RosenBrock",err=0.0):
-        super(RosenBrock, self).__init__(name=name)
+    def __init__(self, name="RosenBrock",err=0.0,noise=None):
+        super(RosenBrock, self).__init__(name=name,noise=noise)
         self.err = err
         self.w_star = np.ones(2)
 
