@@ -18,9 +18,16 @@ def iqr(x):
     iqr = q75 - q25
     return iqr
 
-def signal_noise():
-    pass
 
-def g_norm()
+def grad_norm(model,a=-1,b=1,n=100):
+    norms = []
+    for i in range(n):
+        w = (b - a) * np.random.rand(2) + a
+        g = model.g_opt(w)
+        g_norm = np.linalg.norm(g, ord=2)
+        norms.append(g_norm)
+    norm = np.mean(norms)
+    return norm
+    
     
     

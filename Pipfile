@@ -12,6 +12,8 @@ jupyter = "*"
 tqdm = "*"
 pandas = "*"
 jupyterlab = "*"
+jupyter-lsp = "*"
+scipy = "*"
 
 [requires]
 python_version = "3.7"

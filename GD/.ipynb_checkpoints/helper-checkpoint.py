@@ -17,5 +17,17 @@ def iqr(x):
     q75, q25 = np.percentile(x, [75 ,25])
     iqr = q75 - q25
     return iqr
+
+
+def grad_norm(model,a=-1,b=1,n=100):
+    norms = []
+    for i in range(n):
+        w = (b - a) * np.random.rand(2) + a
+        g = model.g_opt(w)
+        g_norm = np.linalg.norm(g, ord=2)
+        norms.append(g_norm)
+    norm = np.mean(norms)
+    return norm
+    
     
     
