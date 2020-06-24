@@ -2,14 +2,14 @@ import numpy as np
 import random
 
 class Model():
-    def __init__(self,noise ,name="", err=0):
+    def __init__(self,noise=None,name="",var = 1):
 
         self.name = name
-        self.err = err  #使わなくなりそうな気がする
         self.noise = noise
+        self.var = var
 
-    def add_noise(self,w):
+    def add_noise(self,w,sigma=1):
         
         if self.noise == None:
             return np.zeros(w.shape)
-        return self.noise(w)
+        return self.noise(w,sigma=sigma)

@@ -1,9 +1,9 @@
 import numpy as np
 import random
 
-def gauss(w,loc=0, scale=1):
+def gauss(w,mean=0, sigma=1):
     np.random.seed()
-    return np.random.normal(loc=loc,scale=scale,size=w.shape)
+    return np.random.normal(loc=mean,scale=sigma,size=w.shape)
 
 def lognormal(w,mean=0,sigma=1):
     np.random.seed()
@@ -28,6 +28,12 @@ def grad_norm(model,a=-1,b=1,n=100):
         norms.append(g_norm)
     norm = np.mean(norms)
     return norm
+
+def var_random_noise(model,max_sigma=10):
+    np.random.seed()
+    sigma = (max_sigma - 1) * np.random.rand(1) + 1
+    model(w)
+    
     
     
     

@@ -344,10 +344,10 @@ class DixonPrice(models.Model):
 
 
 class RosenBrock(models.Model):
-    def __init__(self, name="RosenBrock",err=0.0,noise=""):
-        super(RosenBrock, self).__init__(name=name,noise=noise)
-        self.err = err
+    def __init__(self, name="RosenBrock",noise=None,var=1):
+        super(RosenBrock, self).__init__(name=name,noise=noise,var=var)
         self.w_star = np.ones(2)
+        self.noise_value = 0
 
     def f_opt(self,w):
         w = np.array(w)
@@ -358,7 +358,8 @@ class RosenBrock(models.Model):
             tmp_2 = (w[i] -1) ** 2
             tmp = tmp_1 + tmp_2
 
-        tmp = tmp + self.add_noise(tmp)
+        self.noise_value = self.add_noise(tmp)
+        tmp = tmp + self.noise_value
 
         return tmp
 
@@ -375,9 +376,11 @@ class RosenBrock(models.Model):
             else:
                 tmp[i] = 100 * (-4) * w[i] * (w[i+1] - w[i] ** 2) + 2 * (w[i] - 1) + 100 * 2 * (w[i] - w[i-1] ** 2)
 
-        tmp = tmp + self.add_noise(tmp)
+        
+        self.noise_value = self.add_noise(tmp,sigma=self.var)
+        tmp = tmp + self.noise_value
 
-        return tmp
+        return tmp,self.noise_value
 
 class Quadratic(models.Model):
     def __init__(self,name="Quadratic",err=0.0):

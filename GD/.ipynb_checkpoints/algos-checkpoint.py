@@ -8,6 +8,7 @@ class Iterative:
         self.t = 0
         self.wstore = []
         self.w_mean = []
+        self.noise_store = []
 
     def __iter__(self):
         return self
@@ -32,5 +33,6 @@ class LineSearch(Iterative):
 
 
     def update(self,model,data=None,label=None):
-        newdir = self.newdir(model=model, data=data, label=label)
+        newdir,noise_value = self.newdir(model=model, data=data, label=label)
+        self.noise_store.append(noise_value)
         self.w = self.w - self.a * newdir
