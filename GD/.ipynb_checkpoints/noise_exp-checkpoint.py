@@ -3,6 +3,8 @@ import random
 import datetime
 import pandas as pd
 import sys
+import tqdm
+from tqdm.notebook import tqdm as tqdm
 
 import model_opt
 import algo_GD
