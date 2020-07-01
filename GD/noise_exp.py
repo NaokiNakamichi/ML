@@ -36,6 +36,7 @@ if __name__ == "__main__":
        
     
     dt_now = datetime.datetime.now()
+    last_w_store = np.array(last_w_store)
     data = np.array([iqr_store,last_w_store[:,0],last_w_store[:,1]]).T
     df = pd.DataFrame(data=data, columns=['iqr', 'w_0', 'w_1'])
     df.to_csv('exp_result/gauss_noise_last_w  {}.csv'.format(dt_now),header=True)
