@@ -37,7 +37,6 @@ def var_random_noise(model,max_sigma=10):
 def get_index_bins(w,a,b=0):
     return np.where((b < w) & (w < a))[0]
 
-def 
     
     
     
