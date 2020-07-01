@@ -34,6 +34,10 @@ def var_random_noise(model,max_sigma=10):
     sigma = (max_sigma - 1) * np.random.rand(1) + 1
     model(w)
     
+def get_index_bins(w,a,b=0):
+    return np.where((b < w) & (w < a))[0]
+
+def 
     
     
     
