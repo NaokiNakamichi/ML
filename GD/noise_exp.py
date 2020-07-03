@@ -12,7 +12,7 @@ import helper
 if __name__ == "__main__":
     args = sys.argv
     t = int(args[1])
-    w_init = np.array([3,3])
+    w_init = np.array([3, 3])
     _t_max = 3000
     f = model_opt.RosenBrock()
 
