@@ -36,5 +36,5 @@ class SGD(algos.LineSearch):
             grad = grad * data[id]
             return grad
         else:
-            grad, noise_value = model.g_opt(w = self.w)
-            return grad, noise_value
+            grad = model.g_opt(w = self.w)
+            return grad

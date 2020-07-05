@@ -22,3 +22,26 @@ class Gauss(Noise):
         value = np.random.normal(loc=mean, scale=sigma, size=self.dim)
         self.value_store.append(value)
         return value
+
+
+class Lognormal(Noise):
+    def __init__(self,dim=1):
+        super().__init__(dim=dim)
+
+    def generate(self,mean=0,sigma=1):
+        np.random.seed()
+        value = np.random.lognormal(mean=mean, sigma=sigma, size=self.dim)
+        self.value_store.append(value)
+        return value
+
+
+class StudentT(Noise):
+    def __init__(self,dim=1):
+        super().__init__(dim=dim)
+
+    def generate(self,v=2):
+        np.random.seed()
+        value = np.random.standard_t(v, size=self.dim)
+        self.value_store.append(value)
+        return value
+
