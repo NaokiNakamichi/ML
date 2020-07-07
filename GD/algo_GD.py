@@ -7,9 +7,8 @@ class GD(algos.LineSearch):
 
         super().__init__(w_init=w_init,t_max=t_max,a=a)
 
-
-    def newdir(self,model,data=None,label=None):
-        if data is not None: # modelは二乗誤差のみを想定
+    def newdir(self, model, data=None,label=None):
+        if data is not None:  # modelは二乗誤差のみを想定
             n = label.shape[0]
             tmp = data.dot(self.w) - label
             grad = model.g_opt(w = tmp)
@@ -32,9 +31,9 @@ class SGD(algos.LineSearch):
             n = label.shape[0]
             id = np.random.randint(n)
             tmp = data[id].dot(self.w) - label[id]
-            grad = model.g_opt(w = tmp)
+            grad = model.g_opt(w=tmp)
             grad = grad * data[id]
             return grad
         else:
-            grad = model.g_opt(w = self.w)
+            grad = model.g_opt(w=self.w)
             return grad
