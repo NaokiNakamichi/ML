@@ -23,7 +23,7 @@ if __name__ == "__main__":
     iqr_store = []
     for i in tqdm(range(t)):
         var = 1
-        noise_data = noise.LogNormal(mean=0, sigma=var, dim=2, n=_t_max).generate() * 80
+        noise_data = noise.LogNormal(mean=0, sigma=var, dim=2, n=_t_max).generate() * 50
         iqr = helper.iqr(noise_data)
         algo = algo_GD.SGD(w_init=w_init, t_max=_t_max, a=0.00078)
         for i in algo:
