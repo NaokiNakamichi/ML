@@ -2,8 +2,10 @@ import numpy as np
 import random
 import datetime
 import pandas as pd
-import sys
 from tqdm import tqdm
+
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 import model_opt
 import algo_GD
@@ -20,9 +22,9 @@ if __name__ == "__main__":
 
     last_w_store = []
     iqr_store = []
-    for i in tqdm(range(t)):
-        var = np.random.randint(1,300,1)[0]
-        noise_data = noise.Gauss(mean=0, sigma=var, dim=2, n=_t_max).generate()
+    for i in range(t):
+        df = 2
+        noise_data = noise.StudentT(dim=2, n=_t_max, df=df).generate() * 30
         iqr = helper.iqr(noise_data)
         algo = algo_GD.SGD(w_init=w_init, t_max=_t_max, a=0.00078)
         for i in algo:
@@ -36,4 +38,4 @@ if __name__ == "__main__":
     last_w_store = np.array(last_w_store)
     data = np.array([iqr_store,last_w_store[:,0],last_w_store[:,1]]).T
     df = pd.DataFrame(data=data, columns=['iqr', 'w_0', 'w_1'])
-    df.to_csv('exp_result/gauss_noise/gauss_noise_last_w{}.csv'.format(dt_now),header=True)
+    df.to_csv('student_t_noise/student_t_noise{}_last_w{}.csv'.format(t,dt_now),header=True)
