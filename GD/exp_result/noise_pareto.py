@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     last_w_store = []
     iqr_store = []
-    for i in range(t):
+    for i in tqdm(range(t)):
         a = 5
         noise_data = noise.Pareto(dim=2, n=_t_max, a=a).generate() * 500
         iqr = helper.iqr(noise_data)

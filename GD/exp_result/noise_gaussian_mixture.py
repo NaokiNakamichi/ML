@@ -1,5 +1,4 @@
 import numpy as np
-import random
 import datetime
 import pandas as pd
 from tqdm import tqdm
@@ -37,4 +36,4 @@ if __name__ == "__main__":
     last_w_store = np.array(last_w_store)
     data = np.array([iqr_store,last_w_store[:,0],last_w_store[:,1]]).T
     df = pd.DataFrame(data=data, columns=['iqr', 'w_0', 'w_1'])
-    df.to_csv('noise_gaussian_mixture/noise_gaussian_mixture_last_w{}.csv'.format(dt_now),header=True)
+    df.to_csv('noise_gaussian_mixture/noise_gaussian_mixture{}_last_w{}.csv'.format(t,dt_now),header=True)
