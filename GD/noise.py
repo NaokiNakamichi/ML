@@ -76,7 +76,6 @@ class GaussianMixture(Noise):
         i_inv = 1 - i
 
         value = i.T * gauss1 + i_inv.T * gauss2
-        print(value)
         value = value - np.mean(value, axis=0)
         self.value_store = value
         return value

@@ -14,7 +14,7 @@ if __name__ == "__main__":
     args = sys.argv
     t = int(args[1])
     w_init = np.array([3, 3])
-    _t_max = 3000
+    _t_max = 1000
     f = model_opt.RosenBrock()
     w_star = f.w_star
 
@@ -37,4 +37,4 @@ if __name__ == "__main__":
     last_w_store = np.array(last_w_store)
     data = np.array([iqr_store,last_w_store[:,0],last_w_store[:,1]]).T
     df = pd.DataFrame(data=data, columns=['iqr', 'w_0', 'w_1'])
-    df.to_csv('exp_result/gauss_noise/gauss_noise_last_w{}.csv'.format(dt_now),header=True)
+    df.to_csv('gauss_noise/gauss_noise_last_w{}.csv'.format(dt_now),header=True)

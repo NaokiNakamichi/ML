@@ -14,9 +14,10 @@ if __name__ == "__main__":
     args = sys.argv
     t = int(args[1])
     w_init = np.array([3, 3])
-    _t_max = 3000
+    _t_max = 1000
     f = model_opt.RosenBrock()
     w_star = f.w_star
+
 
     last_w_store = []
     iqr_store = []
