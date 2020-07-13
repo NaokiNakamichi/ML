@@ -24,7 +24,7 @@ if __name__ == "__main__":
     iqr_store = []
     for i in tqdm(range(t)):
         a = 5
-        noise_data = noise.Pareto(dim=2, n=_t_max, a=a).generate() * 500
+        noise_data = noise.Pareto(dim=2, n=_t_max, a=a).generate() * 300
         iqr = helper.iqr(noise_data)
         algo = algo_GD.SGD(w_init=w_init, t_max=_t_max, a=0.00078)
         for i in algo:

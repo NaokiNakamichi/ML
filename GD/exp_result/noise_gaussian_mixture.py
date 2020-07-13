@@ -21,7 +21,7 @@ if __name__ == "__main__":
     last_w_store = []
     iqr_store = []
     for i in tqdm(range(t)):
-        sigma, mean = 30, 70
+        sigma, mean = 10, 40  # iqr 70~80くらい
         noise_data = noise.GaussianMixture(dim=2, n=_t_max, sigma=sigma, mean=mean).generate()
         iqr = helper.iqr(noise_data)
         algo = algo_GD.SGD(w_init=w_init, t_max=_t_max, a=0.00078)

@@ -30,8 +30,8 @@ class LogNormal(Noise):
 
     def generate(self):
         np.random.seed()
-        value = np.random.lognormal(mean=self.mean, sigma=self.sigma, size=(self.n,self.dim))
-        value = value - np.mean(value,axis=0)
+        value = np.random.lognormal(mean=self.mean, sigma=self.sigma, size=(self.n, self.dim))
+        value = value - np.mean(value, axis=0)
         self.value_store = value
         return value
 
@@ -76,6 +76,8 @@ class GaussianMixture(Noise):
         i_inv = 1 - i
 
         value = i.T * gauss1 + i_inv.T * gauss2
+        print(value)
+        value = value - np.mean(value, axis=0)
         self.value_store = value
         return value
 

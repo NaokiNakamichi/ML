@@ -24,7 +24,7 @@ if __name__ == "__main__":
     iqr_store = []
     for i in range(t):
         df = 2
-        noise_data = noise.StudentT(dim=2, n=_t_max, df=df).generate() * 30
+        noise_data = noise.StudentT(dim=2, n=_t_max, df=df).generate() * 45
         iqr = helper.iqr(noise_data)
         algo = algo_GD.SGD(w_init=w_init, t_max=_t_max, a=0.00078)
         for i in algo:

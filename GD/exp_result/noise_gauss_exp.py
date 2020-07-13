@@ -21,7 +21,8 @@ if __name__ == "__main__":
     last_w_store = []
     iqr_store = []
     for i in tqdm(range(t)):
-        var = np.random.randint(1,300,1)[0]
+        #var = np.random.randint(1,300,1)[0]
+        var = 55 # iqr 70~80
         noise_data = noise.Gauss(mean=0, sigma=var, dim=2, n=_t_max).generate()
         iqr = helper.iqr(noise_data)
         algo = algo_GD.SGD(w_init=w_init, t_max=_t_max, a=0.00078)
