@@ -7,17 +7,17 @@ import random
 class Bohachevsky(models.Model):
     # minimum (0,0)
 
-    def __init__(self, name="Bohachevsky", noise=None, var=1):
-        super(Bohachevsky, self).__init__(name=name, noise=noise, var=var)
+    def __init__(self, name="Bohachevsky", noise_value=np.array([0,0]), var=1):
+        super(Bohachevsky, self).__init__(name=name,var=var)
         self.w_star = np.array([0, 0])
-        self.noise_value = 0
+        self.noise_value = noise_value
 
     def f_opt(self, w):
         w = np.array(w)
         w1, w2 = w[0], w[1]
         f = w1 ** 2 + 2 * w2 ** 2 - 0.3 * np.cos(3 * np.pi * w1) - 0.4 * np.cos(4 * np.pi * w2) + 0.7
-        if self.noise is not None:
-            f = f + self.add_noise(f,)
+
+
         return f
 
     def g_opt(self, w):
@@ -26,12 +26,12 @@ class Bohachevsky(models.Model):
         g_w1 = 2 * w1 + 0.9 * np.pi * np.sin(3 * np.pi * w1)
         g_w2 = 4 * w2 + 1.6 * np.pi * np.sin(4 * np.pi * w2)
         g = np.array([g_w1, g_w2])
-        if self.err != 0:
-            g = g + self.err * np.random.randn(2)
+        g = g + self.noise_value
         return g
 
 
 # TODO: Perm関数　SGDがうまく収束していない、勾配がうまく実装できてない可能性。
+# そもそもnumpyにforループで回してる時点でだめ
 class Perm(models.Model):
     def __init__(self, name="Perm", err=0.0, b=0.001):
         super(Perm, self).__init__(name=name)

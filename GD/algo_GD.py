@@ -1,3 +1,5 @@
+# coding: UTF-8
+
 import numpy as np
 
 import algos
@@ -8,7 +10,8 @@ class GD(algos.LineSearch):
         super().__init__(w_init=w_init,t_max=t_max,a=a)
 
     def newdir(self, model, data=None,label=None):
-        if data is not None:  # modelは二乗誤差のみを想定
+        # modelは二乗誤差のみを想定
+        if data is not None:
             n = label.shape[0]
             tmp = data.dot(self.w) - label
             grad = model.g_opt(w = tmp)
@@ -37,3 +40,16 @@ class SGD(algos.LineSearch):
         else:
             grad = model.g_opt(w=self.w)
             return grad
+
+
+class MinibatchSGD(SGD):
+    def __init__(self, w_init, t_max, a=0.1, batchsize=1):
+
+        super().__init__(w_init=w_init, t_max=t_max, a=a)
+        self.batchsize = batchsize
+
+    def newdir(self,model,data=None,label=None):  # オーバーライドしてるが意味はあるか？
+        grad = model.g_opt(w=self.w)
+        grad_mean = np.mean(grad,axis=0)
+
+        return grad_mean

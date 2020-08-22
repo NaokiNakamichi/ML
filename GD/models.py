@@ -1,5 +1,4 @@
 import numpy as np
-import random
 
 class Model():
     def __init__(self,noise=None,name="",var = 1):
