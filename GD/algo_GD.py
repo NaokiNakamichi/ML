@@ -43,10 +43,9 @@ class SGD(algos.LineSearch):
 
 
 class MinibatchSGD(SGD):
-    def __init__(self, w_init, t_max, a=0.1, batchsize=1):
+    def __init__(self, w_init, t_max, a=0.1):
 
         super().__init__(w_init=w_init, t_max=t_max, a=a)
-        self.batchsize = batchsize
 
     def newdir(self,model,data=None,label=None):  # オーバーライドしてるが意味はあるか？
         grad = model.g_opt(w=self.w)
