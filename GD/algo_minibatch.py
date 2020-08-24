@@ -56,3 +56,45 @@ class MinibatchDoublingPartialAveragingSGD:
         self.w_store.append(self.w)
 
         return self.w
+
+
+class PolyakRupportAveraging:
+
+    def __init__(self, a, t, w, eta, noise_data):
+        self.t = t
+        self.a = a
+        self.w = w
+        self.eta = eta
+        self.noise_data = noise_data
+        self.w_store = []
+
+    def calculate(self, model_func):
+        self.w_store.append(self.w)
+        algo = algo_GD.SGD(w_init=self.w, t_max = self.t, a=self.a)
+        for i in algo:
+            f = model_func(noise_value=self.noise_data[algo.t-1])
+            algo.update(f)
+            self.w_store.append(algo.w)
+            tmp = 0
+            total_w = 0
+            for k in range(algo.t):
+                tmp += (1 - self.eta) ** k
+                total_w += ((1 - self.eta) ** k) * algo.wstore[k]
+            self.w = total_w / tmp
+            self.w_store.append(self.w)
+
+        return self.w
+
+
+
+
+
+
+
+
+
+        return
+
+
+
+
