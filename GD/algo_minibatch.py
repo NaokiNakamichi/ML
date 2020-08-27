@@ -87,14 +87,3 @@ class PolyakRupportAveraging:
 
 
 
-
-
-
-
-
-
-        return
-
-
-
-
