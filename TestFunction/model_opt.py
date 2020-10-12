@@ -303,10 +303,10 @@ class SixHumpCamel(models.Model):
 
 
 class DixonPrice(models.Model):
-    def __init__(self, name="Dixon-Price",noise_value=np.array([0,0])):
+    def __init__(self, name="Dixon-Price", err=0.0):
         super(DixonPrice, self).__init__(name=name)
+        self.err = err
         self.w_star = np.array([1, 2 ** (-1 / 2)])
-        self.noise_value = noise_value
 
     def f_opt(self, w):
         w = np.array(w)
@@ -320,6 +320,10 @@ class DixonPrice(models.Model):
         for i in range(1, d):
             tmp += (i + 1) * (2 * w[i] ** 2 - w[i - 1]) ** 2
         tmp += (w[0] - 1) ** 2
+
+        if self.err != 0:
+            tmp = tmp + self.err * np.random.randn(1)
+
         return tmp[0]
 
     def g_opt(self, w):
@@ -338,8 +342,9 @@ class DixonPrice(models.Model):
                 tmp[i] = 8 * w[i] * d * (i + 1) * (2 * w[i] ** 2 - w[i - 1])
             else:
                 tmp[i] = 8 * w[i] * d * (i + 1) * (2 * w[i] ** 2 - w[i - 1]) - (i + 2) * 2 * (2 * w[i + 1] ** 2 - w[i])
-                
-        tmp = tmp + self.noise_value
+
+        if self.err != 0:
+            tmp = tmp + self.err * np.random.randn(1)
 
         return tmp
 

@@ -38,11 +38,5 @@ def grad_norm(model, a=-1, b=1, n=100):
     return norm
 
 
-def var_random_noise(model, max_sigma=10):
-    np.random.seed()
-    sigma = (max_sigma - 1) * np.random.rand(1) + 1
-    model(w)
-
-
 def get_index_bins(w, a, b=0):
     return np.where((b < w) & (w < a))[0]
