@@ -3,10 +3,17 @@ import numpy as np
 import models
 import random
 
+"""
+This nodule give test function value and the gradient.
+It can add only just additive noise. it can't add multiplicative noise.
+w_star is value that minimize test function value.
+
+input is numpy.array or array
+f_value output is scalar, gradient output depends on input dimension
+"""
+
 
 class Bohachevsky(models.Model):
-    # minimum (0,0)
-
     def __init__(self, name="Bohachevsky", noise_value=np.array([0,0]), var=1):
         super(Bohachevsky, self).__init__(name=name,var=var)
         self.w_star = np.array([0, 0])
@@ -16,8 +23,6 @@ class Bohachevsky(models.Model):
         w = np.array(w)
         w1, w2 = w[0], w[1]
         f = w1 ** 2 + 2 * w2 ** 2 - 0.3 * np.cos(3 * np.pi * w1) - 0.4 * np.cos(4 * np.pi * w2) + 0.7
-
-
         return f
 
     def g_opt(self, w):
@@ -31,48 +36,44 @@ class Bohachevsky(models.Model):
 
 
 # TODO: Perm関数　SGDがうまく収束していない、勾配がうまく実装できてない可能性。
-# そもそもnumpyにforループで回してる時点でだめ
+# forループで回してる時点でだめ
 class Perm(models.Model):
-    def __init__(self, name="Perm", err=0.0, b=0.001):
+    def __init__(self, name="Perm", b=0.001,noise_value=np.array([0,0])):
         super(Perm, self).__init__(name=name)
-        self.w_star = np.array([1, 0.5])
-        self.err = err
         self.b = b
-
-    def f_opt(self, w):
-        w = np.array(w)
-        d = w.shape[0]
+        self.noise_value = noise_value
         self.w_star = []
-        for i in range(d):
+        self.d = self.noise_value.shape[0]
+        for i in range(self.d):
             self.w_star.append(1 / (i + 1))
         self.w_star = np.array(self.w_star)
 
-        tmp = 0
-        for i in list(range(d)):
-            for j in list(range(d)):
-                tmp += ((j + 1 + self.b) * (w[j] ** (i + 1) - (1 / (j + 1) ** (i + 1)))) ** 2
 
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
+    def f_opt(self, w):
+        w = np.array(w)
+        tmp_1 = np.arange(1,self.d+1)
+        tmp_2 = 1 / tmp_1
+        tmp_3 = tmp_1 + self.b
+
+
+        tmp = 0
+        for i in range(1,self.d+1):
+            tmp += np.sum(tmp_3 * (w ** i - tmp_2 ** i)) ** 2
 
         return tmp
 
     def g_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = []
-        for i in range(d):
-            self.w_star.append(1 / (i + 1))
-        self.w_star = np.array(self.w_star)
         tmp = np.zeros(w.shape)
-        for i in list(range(d)):
-            for j in list(range(d)):
-                for k in list(range(d)):
-                    s = (j + 1 + self.b) * (2 * (i + 1) * (w[j] ** (i))) * (w[k] ** (i + 1) - (1 / (j + 1) ** (i + 1)))
-                    tmp[j] += s
+        tmp_1 = np.arange(1, self.d + 1)
+        tmp_2 = 1 / tmp_1
+        tmp_3 = tmp_1 + self.b
 
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(d)
+        for i in range(1,self.d+1):
+            tmp += 2 * w ** (i-1) * np.sum(tmp_3 * (w ** i - tmp_2 ** i))
+
+        tmp += self.noise_value
+
         return tmp
 
 
@@ -345,7 +346,7 @@ class DixonPrice(models.Model):
 
 
 class RosenBrock(models.Model):
-    def __init__(self, name="RosenBrock", noise_value=np.array([0,0]), var=1):
+    def __init__(self, name="RosenBrock", noise_value=np.array([0,0])):
         super(RosenBrock, self).__init__(name=name)
         self.w_star = np.ones(2)
         self.noise_value = noise_value
@@ -353,14 +354,13 @@ class RosenBrock(models.Model):
     def f_opt(self, w):
         w = np.array(w)
         d = w.shape[0]
+        tmp = 0
         self.w_star = np.ones(d)
         for i in range(0, d - 1):
             tmp_1 = 100 * (w[i + 1] - w[i] ** 2) ** 2
             tmp_2 = (w[i] - 1) ** 2
-            tmp = tmp_1 + tmp_2
+            tmp += tmp_1 + tmp_2
 
-        self.noise_value = self.add_noise(tmp)
-        tmp = tmp + self.noise_value
 
         return tmp
 

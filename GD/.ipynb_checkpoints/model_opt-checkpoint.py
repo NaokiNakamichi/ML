@@ -5,8 +5,6 @@ import random
 
 
 class Bohachevsky(models.Model):
-    # minimum (0,0)
-
     def __init__(self, name="Bohachevsky", noise_value=np.array([0,0]), var=1):
         super(Bohachevsky, self).__init__(name=name,var=var)
         self.w_star = np.array([0, 0])
@@ -16,8 +14,6 @@ class Bohachevsky(models.Model):
         w = np.array(w)
         w1, w2 = w[0], w[1]
         f = w1 ** 2 + 2 * w2 ** 2 - 0.3 * np.cos(3 * np.pi * w1) - 0.4 * np.cos(4 * np.pi * w2) + 0.7
-
-
         return f
 
     def g_opt(self, w):
@@ -345,7 +341,7 @@ class DixonPrice(models.Model):
 
 
 class RosenBrock(models.Model):
-    def __init__(self, name="RosenBrock", noise_value=np.array([0,0]), var=1):
+    def __init__(self, name="RosenBrock", noise_value=np.array([0,0])):
         super(RosenBrock, self).__init__(name=name)
         self.w_star = np.ones(2)
         self.noise_value = noise_value
@@ -359,7 +355,6 @@ class RosenBrock(models.Model):
             tmp_2 = (w[i] - 1) ** 2
             tmp = tmp_1 + tmp_2
 
-        self.noise_value = self.add_noise(tmp)
         tmp = tmp + self.noise_value
 
         return tmp
