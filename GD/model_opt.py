@@ -43,7 +43,7 @@ class Perm(models.Model):
         self.b = b
         self.noise_value = noise_value
         self.w_star = []
-        self.d = self.noise_value.shape[0]
+        self.d = self.noise_value.shape[-1]
         for i in range(self.d):
             self.w_star.append(1 / (i + 1))
         self.w_star = np.array(self.w_star)
@@ -70,7 +70,7 @@ class Perm(models.Model):
         tmp_3 = tmp_1 + self.b
 
         for i in range(1,self.d+1):
-            tmp += 2 * w ** (i-1) * np.sum(tmp_3 * (w ** i - tmp_2 ** i))
+            tmp += 2 * i * w ** (i-1) * tmp_3 ** 2 * (w ** i - tmp_2 ** i)
 
         tmp += self.noise_value
 
