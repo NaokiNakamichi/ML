@@ -35,8 +35,6 @@ class Bohachevsky(models.Model):
         return g
 
 
-# TODO: Perm関数　SGDがうまく収束していない、勾配がうまく実装できてない可能性。
-# forループで回してる時点でだめ
 class Perm(models.Model):
     def __init__(self, name="Perm", b=0.001,noise_value=np.array([0,0])):
         super(Perm, self).__init__(name=name)
@@ -54,8 +52,6 @@ class Perm(models.Model):
         tmp_1 = np.arange(1,self.d+1)
         tmp_2 = 1 / tmp_1
         tmp_3 = tmp_1 + self.b
-
-
         tmp = 0
         for i in range(1,self.d+1):
             tmp += np.sum(tmp_3 * (w ** i - tmp_2 ** i)) ** 2
@@ -78,94 +74,64 @@ class Perm(models.Model):
 
 
 class RotatedHyperEllipsoid(models.Model):
-    def __init__(self, name="ROTATED HYPER-ELLIPSOID", err=0.0):
+    def __init__(self, name="ROTATED HYPER-ELLIPSOID",noise_value=np.array([0,0])):
         super(RotatedHyperEllipsoid, self).__init__(name=name)
-        self.err = err
         self.w_star = np.array([0, 0])
+        self.noise_value = noise_value
+        self.d = self.noise_value.shape[-1]
 
     def f_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp += np.sum(w[:i + 1] ** 2, axis=0)
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
-        return tmp[0]
+        tmp1 = np.arange(self.d, 0, -1)
+        tmp2 = w ** 2
+        tmp = np.sum(tmp1 * tmp2)
+        return tmp
 
     def g_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp[i] += np.sum(2 * w[:i + 1], axis=0)
-
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
+        tmp1 = np.arange(self.d, 0, -1)
+        tmp = 2 * tmp1 * w
+        tmp = tmp + self.noise_value
         return tmp
 
 
 class Sphere(models.Model):
-    def __init__(self, name="Sphere", err=0.0):
+    def __init__(self, name="Sphere", noise_value=np.array([0,0])):
         super(Sphere, self).__init__(name=name)
-        self.err = err
         self.w_star = np.array([0, 0])
+        self.noise_value = noise_value
+        self.d = self.noise_value.shape[-1]
 
     def f_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp += w[i] ** 2
-
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
-
-        return tmp[0]
+        tmp = np.sum(w ** 2)
+        return tmp
 
     def g_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp[i] = 2 * w[i]
-
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
-
+        tmp = 2 * w
+        tmp = tmp + self.noise_value
         return tmp
 
 
 class SumOfDifferent(models.Model):
-    def __init__(self, name="SumOfDifferent", err=0.0):
+    def __init__(self, name="SumOfDifferent", noise_value=np.array([0,0])):
         super(SumOfDifferent, self).__init__(name=name)
-        self.err = err
         self.w_star = np.array([0, 0])
+        self.noise_value = noise_value
+        self.d = self.noise_value.shape[-1]
 
     def f_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp += np.abs(w[i]) ** (i + 2)
-
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
-
-        return tmp[0]
+        tmp1 = np.arange(2,self.d+2)
+        tmp = np.sum(w ** tmp1)
+        return tmp
 
     def g_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp[i] = (i + 2) * (np.abs(w[i]) ** (i + 1))
+        tmp1 = np.arange(1, self.d + 1)
+        tmp = 
+
 
         if self.err != 0:
             tmp = tmp + self.err * np.random.randn(1)
