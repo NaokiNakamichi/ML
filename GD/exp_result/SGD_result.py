@@ -43,7 +43,7 @@ model_name = []
 for model in tqdm(model_list):
     for var in noise_var_list:
         for lr in lr_list:
-            for _ in range(1):
+            for _ in range(1000):
 
                 w_init = (w_range[1] - w_range[0]) * np.random.rand(dim) + w_range[0]
                 algo = SGD(w_init=w_init, t_max=_t_max, a=lr)
