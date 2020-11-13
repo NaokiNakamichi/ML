@@ -69,7 +69,7 @@ for model in tqdm(model_list):
 
 df = pd.DataFrame([model_name,lr_frag,noise_var_flag,f_value]).T
 dt_now = datetime.datetime.now()
-df.to_csv('SGD_exp_result/SGD_exp_result{}.csv'.format(dt_now))
+df.to_csv('SGD_exp_result{}.csv'.format(dt_now))
 
 
 

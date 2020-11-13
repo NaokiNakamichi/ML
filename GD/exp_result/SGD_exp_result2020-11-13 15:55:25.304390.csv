@@ -1,0 +1,225 @@
+,0,1,2,3
+0,Perm,1e-10,0,-1
+1,Perm,5e-05,0,-1
+2,Perm,0.0001,0,-1
+3,Perm,0.005,0,-1
+4,Perm,0.001,0,-1
+5,Perm,0.01,0,-1
+6,Perm,0.1,0,-1
+7,Perm,1,0,-1
+8,Perm,1e-10,10,-1
+9,Perm,5e-05,10,-1
+10,Perm,0.0001,10,-1
+11,Perm,0.005,10,-1
+12,Perm,0.001,10,-1
+13,Perm,0.01,10,-1
+14,Perm,0.1,10,-1
+15,Perm,1,10,-1
+16,Perm,1e-10,30,-1
+17,Perm,5e-05,30,-1
+18,Perm,0.0001,30,-1
+19,Perm,0.005,30,-1
+20,Perm,0.001,30,-1
+21,Perm,0.01,30,-1
+22,Perm,0.1,30,-1
+23,Perm,1,30,-1
+24,Perm,1e-10,50,-1
+25,Perm,5e-05,50,-1
+26,Perm,0.0001,50,-1
+27,Perm,0.005,50,-1
+28,Perm,0.001,50,-1
+29,Perm,0.01,50,-1
+30,Perm,0.1,50,-1
+31,Perm,1,50,-1
+32,Perm,1e-10,70,-1
+33,Perm,5e-05,70,-1
+34,Perm,0.0001,70,-1
+35,Perm,0.005,70,-1
+36,Perm,0.001,70,-1
+37,Perm,0.01,70,-1
+38,Perm,0.1,70,-1
+39,Perm,1,70,-1
+40,Perm,1e-10,90,-1
+41,Perm,5e-05,90,-1
+42,Perm,0.0001,90,-1
+43,Perm,0.005,90,-1
+44,Perm,0.001,90,-1
+45,Perm,0.01,90,-1
+46,Perm,0.1,90,-1
+47,Perm,1,90,-1
+48,Perm,1e-10,100,-1
+49,Perm,5e-05,100,-1
+50,Perm,0.0001,100,-1
+51,Perm,0.005,100,-1
+52,Perm,0.001,100,-1
+53,Perm,0.01,100,-1
+54,Perm,0.1,100,-1
+55,Perm,1,100,-1
+56,RosenBrock,1e-10,0,1169287.596135097
+57,RosenBrock,5e-05,0,1189.789286623082
+58,RosenBrock,0.0001,0,513.8368870009958
+59,RosenBrock,0.005,0,-1
+60,RosenBrock,0.001,0,-1
+61,RosenBrock,0.01,0,-1
+62,RosenBrock,0.1,0,-1
+63,RosenBrock,1,0,-1
+64,RosenBrock,1e-10,10,1644419.7959161552
+65,RosenBrock,5e-05,10,1089.6542730397189
+66,RosenBrock,0.0001,10,1000.3172805942445
+67,RosenBrock,0.005,10,-1
+68,RosenBrock,0.001,10,-1
+69,RosenBrock,0.01,10,-1
+70,RosenBrock,0.1,10,-1
+71,RosenBrock,1,10,-1
+72,RosenBrock,1e-10,30,1241991.2632313021
+73,RosenBrock,5e-05,30,1085.547973504042
+74,RosenBrock,0.0001,30,715.0940931645634
+75,RosenBrock,0.005,30,-1
+76,RosenBrock,0.001,30,-1
+77,RosenBrock,0.01,30,-1
+78,RosenBrock,0.1,30,-1
+79,RosenBrock,1,30,-1
+80,RosenBrock,1e-10,50,1794983.0683864409
+81,RosenBrock,5e-05,50,1404.1006092415978
+82,RosenBrock,0.0001,50,607.875933540497
+83,RosenBrock,0.005,50,-1
+84,RosenBrock,0.001,50,-1
+85,RosenBrock,0.01,50,-1
+86,RosenBrock,0.1,50,-1
+87,RosenBrock,1,50,-1
+88,RosenBrock,1e-10,70,1252701.2473168662
+89,RosenBrock,5e-05,70,1257.5872132998545
+90,RosenBrock,0.0001,70,584.2800185189152
+91,RosenBrock,0.005,70,-1
+92,RosenBrock,0.001,70,-1
+93,RosenBrock,0.01,70,-1
+94,RosenBrock,0.1,70,-1
+95,RosenBrock,1,70,-1
+96,RosenBrock,1e-10,90,1224382.8401135951
+97,RosenBrock,5e-05,90,1370.430991923312
+98,RosenBrock,0.0001,90,611.6099498883798
+99,RosenBrock,0.005,90,-1
+100,RosenBrock,0.001,90,-1
+101,RosenBrock,0.01,90,-1
+102,RosenBrock,0.1,90,-1
+103,RosenBrock,1,90,-1
+104,RosenBrock,1e-10,100,1403809.6187895455
+105,RosenBrock,5e-05,100,1243.7211564074269
+106,RosenBrock,0.0001,100,569.07652361462
+107,RosenBrock,0.005,100,-1
+108,RosenBrock,0.001,100,-1
+109,RosenBrock,0.01,100,-1
+110,RosenBrock,0.1,100,-1
+111,RosenBrock,1,100,-1
+112,SumOfDifferent,1e-10,0,-1
+113,SumOfDifferent,5e-05,0,-1
+114,SumOfDifferent,0.0001,0,-1
+115,SumOfDifferent,0.005,0,-1
+116,SumOfDifferent,0.001,0,-1
+117,SumOfDifferent,0.01,0,-1
+118,SumOfDifferent,0.1,0,-1
+119,SumOfDifferent,1,0,-1
+120,SumOfDifferent,1e-10,10,-1
+121,SumOfDifferent,5e-05,10,-1
+122,SumOfDifferent,0.0001,10,-1
+123,SumOfDifferent,0.005,10,-1
+124,SumOfDifferent,0.001,10,-1
+125,SumOfDifferent,0.01,10,-1
+126,SumOfDifferent,0.1,10,-1
+127,SumOfDifferent,1,10,-1
+128,SumOfDifferent,1e-10,30,-1
+129,SumOfDifferent,5e-05,30,-1
+130,SumOfDifferent,0.0001,30,-1
+131,SumOfDifferent,0.005,30,-1
+132,SumOfDifferent,0.001,30,-1
+133,SumOfDifferent,0.01,30,-1
+134,SumOfDifferent,0.1,30,-1
+135,SumOfDifferent,1,30,-1
+136,SumOfDifferent,1e-10,50,-1
+137,SumOfDifferent,5e-05,50,-1
+138,SumOfDifferent,0.0001,50,-1
+139,SumOfDifferent,0.005,50,-1
+140,SumOfDifferent,0.001,50,-1
+141,SumOfDifferent,0.01,50,-1
+142,SumOfDifferent,0.1,50,-1
+143,SumOfDifferent,1,50,-1
+144,SumOfDifferent,1e-10,70,-1
+145,SumOfDifferent,5e-05,70,-1
+146,SumOfDifferent,0.0001,70,-1
+147,SumOfDifferent,0.005,70,-1
+148,SumOfDifferent,0.001,70,-1
+149,SumOfDifferent,0.01,70,-1
+150,SumOfDifferent,0.1,70,-1
+151,SumOfDifferent,1,70,-1
+152,SumOfDifferent,1e-10,90,-1
+153,SumOfDifferent,5e-05,90,-1
+154,SumOfDifferent,0.0001,90,-1
+155,SumOfDifferent,0.005,90,-1
+156,SumOfDifferent,0.001,90,-1
+157,SumOfDifferent,0.01,90,-1
+158,SumOfDifferent,0.1,90,-1
+159,SumOfDifferent,1,90,-1
+160,SumOfDifferent,1e-10,100,-1
+161,SumOfDifferent,5e-05,100,-1
+162,SumOfDifferent,0.0001,100,-1
+163,SumOfDifferent,0.005,100,-1
+164,SumOfDifferent,0.001,100,-1
+165,SumOfDifferent,0.01,100,-1
+166,SumOfDifferent,0.1,100,-1
+167,SumOfDifferent,1,100,-1
+168,Sum Squares,1e-10,0,52180.24856960932
+169,Sum Squares,5e-05,0,14316.606297663233
+170,Sum Squares,0.0001,0,4636.358620681561
+171,Sum Squares,0.005,0,0.28985250106690885
+172,Sum Squares,0.001,0,56.674230094901375
+173,Sum Squares,0.01,0,757.4578627387368
+174,Sum Squares,0.1,0,8.939269459728978e+258
+175,Sum Squares,1,0,-1
+176,Sum Squares,1e-10,10,43848.72555616129
+177,Sum Squares,5e-05,10,13897.567830777936
+178,Sum Squares,0.0001,10,3987.0818257383553
+179,Sum Squares,0.005,10,19.98208379912577
+180,Sum Squares,0.001,10,28.072011552842785
+181,Sum Squares,0.01,10,1986.6657685978305
+182,Sum Squares,0.1,10,2.3761672350022397e+258
+183,Sum Squares,1,10,-1
+184,Sum Squares,1e-10,30,43372.424514615035
+185,Sum Squares,5e-05,30,12857.497906037574
+186,Sum Squares,0.0001,30,4253.373272200307
+187,Sum Squares,0.005,30,145.929013930956
+188,Sum Squares,0.001,30,80.15063321187641
+189,Sum Squares,0.01,30,2419.2334717455637
+190,Sum Squares,0.1,30,8.023740703140679e+258
+191,Sum Squares,1,30,-1
+192,Sum Squares,1e-10,50,40639.63407637896
+193,Sum Squares,5e-05,50,11758.117196161029
+194,Sum Squares,0.0001,50,4378.465132174485
+195,Sum Squares,0.005,50,429.09750682040345
+196,Sum Squares,0.001,50,115.77087221696223
+197,Sum Squares,0.01,50,21446.985998622564
+198,Sum Squares,0.1,50,1.0953251582350233e+259
+199,Sum Squares,1,50,-1
+200,Sum Squares,1e-10,70,41278.257950199564
+201,Sum Squares,5e-05,70,13781.16293370535
+202,Sum Squares,0.0001,70,4538.12075349766
+203,Sum Squares,0.005,70,931.0732691920472
+204,Sum Squares,0.001,70,177.365020726548
+205,Sum Squares,0.01,70,9572.335939907178
+206,Sum Squares,0.1,70,9.716223211486194e+257
+207,Sum Squares,1,70,-1
+208,Sum Squares,1e-10,90,43883.01712690758
+209,Sum Squares,5e-05,90,12916.357521275522
+210,Sum Squares,0.0001,90,4223.75183062852
+211,Sum Squares,0.005,90,1177.969709451794
+212,Sum Squares,0.001,90,265.7241737225854
+213,Sum Squares,0.01,90,9195.047358560325
+214,Sum Squares,0.1,90,2.932100444985992e+258
+215,Sum Squares,1,90,-1
+216,Sum Squares,1e-10,100,46856.78923592179
+217,Sum Squares,5e-05,100,12831.915484065454
+218,Sum Squares,0.0001,100,5048.753677179025
+219,Sum Squares,0.005,100,1787.5363099199053
+220,Sum Squares,0.001,100,274.58997593434026
+221,Sum Squares,0.01,100,23629.08400237159
+222,Sum Squares,0.1,100,1.9609444262235645e+258
+223,Sum Squares,1,100,-1
