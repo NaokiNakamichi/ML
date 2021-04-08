@@ -3,10 +3,19 @@ import numpy as np
 import models
 import random
 
+"""
+This nodule give test function value and the gradient.
+It can add only just additive noise. it can't add multiplicative noise.
+w_star is value that minimize test function value.
+
+input is numpy.array or array
+f_value output is scalar, gradient output depends on input dimension
+"""
+
 
 class Bohachevsky(models.Model):
-    def __init__(self, name="Bohachevsky", noise_value=np.array([0,0]), var=1):
-        super(Bohachevsky, self).__init__(name=name,var=var)
+    def __init__(self, name="Bohachevsky", noise_value=np.array([0,0])):
+        super(Bohachevsky, self).__init__(name=name)
         self.w_star = np.array([0, 0])
         self.noise_value = noise_value
 
@@ -26,228 +35,166 @@ class Bohachevsky(models.Model):
         return g
 
 
-# TODO: Perm関数　SGDがうまく収束していない、勾配がうまく実装できてない可能性。
-# そもそもnumpyにforループで回してる時点でだめ
 class Perm(models.Model):
-    def __init__(self, name="Perm", err=0.0, b=0.001):
+    def __init__(self, name="Perm", b=0.001,noise_value=np.array([0,0])):
         super(Perm, self).__init__(name=name)
-        self.w_star = np.array([1, 0.5])
-        self.err = err
         self.b = b
-
-    def f_opt(self, w):
-        w = np.array(w)
-        d = w.shape[0]
+        self.noise_value = noise_value
         self.w_star = []
-        for i in range(d):
+        self.d = self.noise_value.shape[-1]
+        for i in range(self.d):
             self.w_star.append(1 / (i + 1))
         self.w_star = np.array(self.w_star)
 
-        tmp = 0
-        for i in list(range(d)):
-            for j in list(range(d)):
-                tmp += ((j + 1 + self.b) * (w[j] ** (i + 1) - (1 / (j + 1) ** (i + 1)))) ** 2
 
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
+    def f_opt(self, w):
+        w = np.array(w)
+        tmp_1 = np.arange(1,self.d+1)
+        tmp_2 = 1 / tmp_1
+        tmp_3 = tmp_1 + self.b
+        tmp = 0
+        for i in range(1,self.d+1):
+            tmp += np.sum(tmp_3 * (w ** i - tmp_2 ** i)) ** 2
 
         return tmp
 
     def g_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = []
-        for i in range(d):
-            self.w_star.append(1 / (i + 1))
-        self.w_star = np.array(self.w_star)
         tmp = np.zeros(w.shape)
-        for i in list(range(d)):
-            for j in list(range(d)):
-                for k in list(range(d)):
-                    s = (j + 1 + self.b) * (2 * (i + 1) * (w[j] ** (i))) * (w[k] ** (i + 1) - (1 / (j + 1) ** (i + 1)))
-                    tmp[j] += s
+        tmp_1 = np.arange(1, self.d + 1)
+        tmp_2 = 1 / tmp_1
+        tmp_3 = tmp_1 + self.b
+        # TODO:for文じゃないやり方で。連番配列用意してかけるとか
+        for i in range(1,self.d+1):
+            tmp += 2 * i * w ** (i-1) * tmp_3 ** 2 * (w ** i - tmp_2 ** i)
 
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(d)
+        tmp += self.noise_value
+
         return tmp
 
 
 class RotatedHyperEllipsoid(models.Model):
-    def __init__(self, name="ROTATED HYPER-ELLIPSOID", err=0.0):
+    def __init__(self, name="ROTATED HYPER-ELLIPSOID",noise_value=np.array([0,0])):
         super(RotatedHyperEllipsoid, self).__init__(name=name)
-        self.err = err
         self.w_star = np.array([0, 0])
+        self.noise_value = noise_value
+        self.d = self.noise_value.shape[-1]
 
     def f_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp += np.sum(w[:i + 1] ** 2, axis=0)
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
-        return tmp[0]
+        tmp1 = np.arange(self.d, 0, -1)
+        tmp2 = w ** 2
+        tmp = np.sum(tmp1 * tmp2)
+        return tmp
 
     def g_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp[i] += np.sum(2 * w[:i + 1], axis=0)
-
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
+        tmp1 = np.arange(self.d, 0, -1)
+        tmp = 2 * tmp1 * w
+        tmp = tmp + self.noise_value
         return tmp
 
 
 class Sphere(models.Model):
-    def __init__(self, name="Sphere", err=0.0):
+    def __init__(self, name="Sphere", noise_value=np.array([0,0])):
         super(Sphere, self).__init__(name=name)
-        self.err = err
         self.w_star = np.array([0, 0])
+        self.noise_value = noise_value
+        self.d = self.noise_value.shape[-1]
 
     def f_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp += w[i] ** 2
-
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
-
-        return tmp[0]
+        tmp = np.sum(w ** 2)
+        return tmp
 
     def g_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp[i] = 2 * w[i]
-
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
-
+        tmp = 2 * w
+        tmp = tmp + self.noise_value
         return tmp
 
 
 class SumOfDifferent(models.Model):
-    def __init__(self, name="SumOfDifferent", err=0.0):
+    def __init__(self, name="SumOfDifferent", noise_value=np.array([0,0])):
         super(SumOfDifferent, self).__init__(name=name)
-        self.err = err
         self.w_star = np.array([0, 0])
+        self.noise_value = noise_value
+        self.d = self.noise_value.shape[-1]
 
     def f_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp += np.abs(w[i]) ** (i + 2)
-
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
-
-        return tmp[0]
+        tmp1 = np.arange(2,self.d+2)
+        tmp = np.sum(np.abs(w) ** tmp1)
+        return tmp
 
     def g_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp[i] = (i + 2) * (np.abs(w[i]) ** (i + 1))
+        tmp1 = np.arange(2,self.d+2)
+        tmp2 = []
+        for i,j in enumerate(w):
+            if (j < 0) and (tmp1[i] % 2 == 1):
+                tmp2.append(-1)
+            else:
+                tmp2.append(1)
 
-        if self.err != 0:
-            tmp = tmp + self.err * np.random.randn(1)
+        tmp = tmp1 * np.array(tmp2) * w ** (tmp1-1)
+        tmp = tmp + self.noise_value
 
         return tmp
 
 
 class SumSquares(models.Model):
-    def __init__(self, name="Sum Squares", err=0.0):
+    def __init__(self, name="Sum Squares", noise_value=np.array([0,0])):
         super(SumSquares, self).__init__(name=name)
-        self.err = err
         self.w_star = np.array([0, 0])
+        self.noise_value = noise_value
+        self.d = self.noise_value.shape[-1]
 
     def f_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp += (i + 1) * (w[i] ** 2)
-
-        if self.err != 0:
-            tmp = tmp + self.add_noise(tmp)
-
-        return tmp[0]
+        tmp1 = np.arange(1, self.d+1)
+        tmp = np.sum(tmp1 * (w ** 2))
+        return tmp
 
     def g_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.zeros(d)
-        tmp = np.zeros(w.shape)
-        for i in range(d):
-            tmp[i] = 2 * (i + 1) * (w[i])
-
-        if self.err != 0:
-            tmp = tmp + self.add_noise(tmp)
-
+        tmp1 = np.arange(1, self.d + 1)
+        tmp = 2 * tmp1 * w
+        tmp = tmp + self.noise_value
         return tmp
 
 
 class Trid(models.Model):
-    def __init__(self, name="trid", err=0.0):
+    def __init__(self, name="trid",noise_value=np.array([0,0])):
         super(Trid, self).__init__(name=name)
-        self.err = err
-        self.w_star = [2, 2]
+        self.w_star = []
+        self.noise_value = noise_value
+        self.d = self.noise_value.shape[-1]
+        for i in range(self.d):
+            minimum = (i + 1) * (self.d + 1 - (i + 1))
+            self.w_star.append(minimum)
+        self.w_star = np.array(self.w_star)
 
     def f_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = []
-        for i in range(d):
-            minimum = (i + 1) * (d + 1 - (i + 1))
-            self.w_star.append(minimum)
-        self.w_star = np.array(self.w_star)
+        tmp1 = np.sum(w[1:] * w[:-1])
+        tmp2 = np.sum((w - 1) ** 2)
+        tmp = tmp2 - tmp1
 
-        tmp_1 = np.zeros(w.shape)
-        tmp_2 = np.zeros(w.shape)
-        for i in range(d):
-            tmp_1 += (w[i] - 1) ** 2
-        for i in range(1, d):
-            tmp_2 += w[i] * w[i - 1]
-        tmp = tmp_1 - tmp_2
-
-        if self.err != 0:
-            tmp = tmp + self.add_noise(tmp)
-
-        return tmp[0]
+        return tmp
 
     def g_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = []
-        for i in range(d):
-            minimum = (i + 1) * (d + 1 - (i + 1))
-            self.w_star.append(minimum)
-        self.w_star = np.array(self.w_star)
         tmp = np.zeros(w.shape)
-        for i in range(d):
+        for i in range(self.d):
             if i == 0:
                 tmp[i] = 2 * (w[i] - 1) - w[i + 1]
-            elif i == d - 1:
+            elif i == self.d - 1:
                 tmp[i] = 2 * (w[i] - 1) - w[i - 1]
             else:
                 tmp[i] = 2 * (w[i] - 1) - (w[i - 1] + w[i + 1])
 
-        if self.err != 0:
-            tmp = tmp + self.add_noise(tmp)
+        tmp = tmp + self.noise_value
 
         return tmp
 
@@ -349,13 +296,13 @@ class RosenBrock(models.Model):
     def f_opt(self, w):
         w = np.array(w)
         d = w.shape[0]
+        tmp = 0
         self.w_star = np.ones(d)
         for i in range(0, d - 1):
             tmp_1 = 100 * (w[i + 1] - w[i] ** 2) ** 2
             tmp_2 = (w[i] - 1) ** 2
-            tmp = tmp_1 + tmp_2
+            tmp += tmp_1 + tmp_2
 
-        tmp = tmp + self.noise_value
 
         return tmp
 
@@ -375,14 +322,3 @@ class RosenBrock(models.Model):
         tmp = tmp + self.noise_value
 
         return tmp
-
-
-class Quadratic(models.Model):
-    def __init__(self, name="Quadratic", err=0.0):
-        super(Quadratic, self).__init__(name=name)
-
-    def f_opt(self, w):
-        return w ** 2
-
-    def g_opt(self, w):
-        return 2 * w

@@ -14,8 +14,8 @@ f_value output is scalar, gradient output depends on input dimension
 
 
 class Bohachevsky(models.Model):
-    def __init__(self, name="Bohachevsky", noise_value=np.array([0,0]), var=1):
-        super(Bohachevsky, self).__init__(name=name,var=var)
+    def __init__(self, name="Bohachevsky", noise_value=np.array([0,0])):
+        super(Bohachevsky, self).__init__(name=name)
         self.w_star = np.array([0, 0])
         self.noise_value = noise_value
 
