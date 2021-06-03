@@ -12,8 +12,9 @@ f_value output is scalar, gradient output depends on input dimension
 """
 
 
+
 class Bohachevsky(models.Model):
-    def __init__(self, name="Bohachevsky", noise_value=np.array([0,0])):
+    def __init__(self, name="Bohachevsky", noise_value=np.array([0, 0])):
         super(Bohachevsky, self).__init__(name=name)
         self.w_star = np.array([0, 0])
         self.noise_value = noise_value
@@ -35,7 +36,7 @@ class Bohachevsky(models.Model):
 
 
 class Perm(models.Model):
-    def __init__(self, name="Perm", b=0.001,noise_value=np.array([0,0])):
+    def __init__(self, name="Perm", b=0.001, noise_value=np.array([0, 0])):
         super(Perm, self).__init__(name=name)
         self.b = b
         self.noise_value = noise_value
@@ -45,14 +46,13 @@ class Perm(models.Model):
             self.w_star.append(1 / (i + 1))
         self.w_star = np.array(self.w_star)
 
-
     def f_opt(self, w):
         w = np.array(w)
-        tmp_1 = np.arange(1,self.d+1)
+        tmp_1 = np.arange(1, self.d + 1)
         tmp_2 = 1 / tmp_1
         tmp_3 = tmp_1 + self.b
         tmp = 0
-        for i in range(1,self.d+1):
+        for i in range(1, self.d + 1):
             tmp += np.sum(tmp_3 * (w ** i - tmp_2 ** i)) ** 2
 
         return tmp
@@ -64,8 +64,8 @@ class Perm(models.Model):
         tmp_2 = 1 / tmp_1
         tmp_3 = tmp_1 + self.b
         # TODO:for文じゃないやり方で。連番配列用意してかけるとか
-        for i in range(1,self.d+1):
-            tmp += 2 * i * w ** (i-1) * tmp_3 ** 2 * (w ** i - tmp_2 ** i)
+        for i in range(1, self.d + 1):
+            tmp += 2 * i * w ** (i - 1) * tmp_3 ** 2 * (w ** i - tmp_2 ** i)
 
         tmp += self.noise_value
 
@@ -73,7 +73,7 @@ class Perm(models.Model):
 
 
 class RotatedHyperEllipsoid(models.Model):
-    def __init__(self, name="ROTATED HYPER-ELLIPSOID",noise_value=np.array([0,0])):
+    def __init__(self, name="ROTATED HYPER-ELLIPSOID", noise_value=np.array([0, 0])):
         super(RotatedHyperEllipsoid, self).__init__(name=name)
         self.w_star = np.array([0, 0])
         self.noise_value = noise_value
@@ -95,7 +95,7 @@ class RotatedHyperEllipsoid(models.Model):
 
 
 class Sphere(models.Model):
-    def __init__(self, name="Sphere", noise_value=np.array([0,0])):
+    def __init__(self, name="Sphere", noise_value=np.array([0, 0])):
         super(Sphere, self).__init__(name=name)
         self.w_star = np.array([0, 0])
         self.noise_value = noise_value
@@ -114,7 +114,7 @@ class Sphere(models.Model):
 
 
 class SumOfDifferent(models.Model):
-    def __init__(self, name="SumOfDifferent", noise_value=np.array([0,0])):
+    def __init__(self, name="SumOfDifferent", noise_value=np.array([0, 0])):
         super(SumOfDifferent, self).__init__(name=name)
         self.w_star = np.array([0, 0])
         self.noise_value = noise_value
@@ -122,28 +122,28 @@ class SumOfDifferent(models.Model):
 
     def f_opt(self, w):
         w = np.array(w)
-        tmp1 = np.arange(2,self.d+2)
+        tmp1 = np.arange(2, self.d + 2)
         tmp = np.sum(np.abs(w) ** tmp1)
         return tmp
 
     def g_opt(self, w):
         w = np.array(w)
-        tmp1 = np.arange(2,self.d+2)
+        tmp1 = np.arange(2, self.d + 2)
         tmp2 = []
-        for i,j in enumerate(w):
+        for i, j in enumerate(w):
             if (j < 0) and (tmp1[i] % 2 == 1):
                 tmp2.append(-1)
             else:
                 tmp2.append(1)
 
-        tmp = tmp1 * np.array(tmp2) * w ** (tmp1-1)
+        tmp = tmp1 * np.array(tmp2) * w ** (tmp1 - 1)
         tmp = tmp + self.noise_value
 
         return tmp
 
 
 class SumSquares(models.Model):
-    def __init__(self, name="Sum Squares", noise_value=np.array([0,0])):
+    def __init__(self, name="Sum Squares", noise_value=np.array([0, 0])):
         super(SumSquares, self).__init__(name=name)
         self.w_star = np.array([0, 0])
         self.noise_value = noise_value
@@ -151,7 +151,7 @@ class SumSquares(models.Model):
 
     def f_opt(self, w):
         w = np.array(w)
-        tmp1 = np.arange(1, self.d+1)
+        tmp1 = np.arange(1, self.d + 1)
         tmp = np.sum(tmp1 * (w ** 2))
         return tmp
 
@@ -164,7 +164,7 @@ class SumSquares(models.Model):
 
 
 class Trid(models.Model):
-    def __init__(self, name="trid",noise_value=np.array([0,0])):
+    def __init__(self, name="trid", noise_value=np.array([0, 0])):
         super(Trid, self).__init__(name=name)
         self.w_star = []
         self.noise_value = noise_value
@@ -245,7 +245,7 @@ class SixHumpCamel(models.Model):
 
 
 class DixonPrice(models.Model):
-    def __init__(self, name="Dixon-Price",noise_value=np.array([0,0])):
+    def __init__(self, name="Dixon-Price", noise_value=np.array([0, 0])):
         super(DixonPrice, self).__init__(name=name)
         self.w_star = np.array([1, 2 ** (-1 / 2)])
         self.noise_value = noise_value
@@ -280,14 +280,14 @@ class DixonPrice(models.Model):
                 tmp[i] = 8 * w[i] * d * (i + 1) * (2 * w[i] ** 2 - w[i - 1])
             else:
                 tmp[i] = 8 * w[i] * d * (i + 1) * (2 * w[i] ** 2 - w[i - 1]) - (i + 2) * 2 * (2 * w[i + 1] ** 2 - w[i])
-                
+
         tmp = tmp + self.noise_value
 
         return tmp
 
 
 class RosenBrock(models.Model):
-    def __init__(self, name="RosenBrock", noise_value=np.array([0,0])):
+    def __init__(self, name="RosenBrock", noise_value=np.array([0, 0])):
         super(RosenBrock, self).__init__(name=name)
         self.w_star = np.ones(2)
         self.noise_value = noise_value
@@ -301,7 +301,6 @@ class RosenBrock(models.Model):
             tmp_1 = 100 * (w[i + 1] - w[i] ** 2) ** 2
             tmp_2 = (w[i] - 1) ** 2
             tmp += tmp_1 + tmp_2
-
 
         return tmp
 

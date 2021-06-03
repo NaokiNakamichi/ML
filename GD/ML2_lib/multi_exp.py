@@ -2,12 +2,11 @@ import multiprocessing as mproc
 import numpy as np
 
 import model_opt
-from GD.lib import algo_GD, helper
+from GD.ML2_lib import algo_GD, helper
 
 
 def noise_multi(noise=None):
-
-    w_init = np.array([3,3])
+    w_init = np.array([3, 3])
     _t_max = 3000
     var = np.random.randint(1, 300, 1)[0]
     noise = helper.gauss
@@ -25,14 +24,13 @@ def noise_multi(noise=None):
         iqr_store.append(helper.iqr(algo.noise_store))
         last_w_store.append(algo.w)
 
+
 if __name__ == "__main__":
     # 自分のマシンでコアが４(macbook)or6(imac)or8(ssh server)
     cpu_count = mproc.cpu_count()
     mypool = mproc.Pool(cpu_count)
 
-
-    mypool.map(func=noise_multi, iterable=)
-
+    mypool.map(func=noise_multi)
 
     # Memory management.
     mypool.close()  # important for stopping memory leaks.
