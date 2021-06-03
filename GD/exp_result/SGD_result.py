@@ -21,7 +21,6 @@ import noise
 ノイズの大きさによる
 """
 
-
 warnings.resetwarnings()
 warnings.simplefilter('error', RuntimeWarning)
 
