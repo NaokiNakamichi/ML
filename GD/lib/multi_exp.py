@@ -2,8 +2,7 @@ import multiprocessing as mproc
 import numpy as np
 
 import model_opt
-import algo_GD
-import helper
+from GD.lib import algo_GD, helper
 
 
 def noise_multi(noise=None):
@@ -12,7 +11,7 @@ def noise_multi(noise=None):
     _t_max = 3000
     var = np.random.randint(1, 300, 1)[0]
     noise = helper.gauss
-    f = model_opt.RosenBrock(noise=noise,var=var)
+    f = model_opt.RosenBrock(noise=noise, var=var)
     algo = algo_GD.SGD(w_init=w_init, t_max=_t_max, a=0.0007)
     w_star = f.w_star
 

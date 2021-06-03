@@ -1,7 +1,6 @@
 import numpy as np
 
 import models
-import random
 
 """
 This nodule give test function value and the gradient.
