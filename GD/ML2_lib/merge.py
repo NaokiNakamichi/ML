@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.spatial.distance import cdist, euclidean
+import miniball
 
 def geomed(X, eps=1e-5):
     y = np.mean(X, 0)
@@ -29,4 +30,10 @@ def geomed(X, eps=1e-5):
 
         y = y1
 
+def median(X):
+    return np.median(X, axis=0)
 
+
+def smallball(X):
+    tmp = np.array(X)
+    return miniball.get_bounding_ball(tmp)[0]
