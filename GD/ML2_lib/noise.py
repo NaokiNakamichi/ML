@@ -16,11 +16,11 @@ class Gauss(Noise):
         self.sigma = sigma
 
     def generate(self):
-        np.random.seed()
+        rng = np.random.default_rng()
         if self.n == 1:
-            return np.random.normal(loc=self.mean, scale=self.sigma, size=self.dim)
+            return rng.normal(loc=self.mean, scale=self.sigma, size=self.dim)
 
-        return np.random.normal(loc=self.mean, scale=self.sigma, size=(self.n, self.dim))
+        return rng.normal(loc=self.mean, scale=self.sigma, size=(self.n, self.dim))
 
 
 class LogNormal(Noise):
@@ -30,13 +30,13 @@ class LogNormal(Noise):
         self.sigma = sigma
 
     def generate(self):
-        np.random.seed()
+        rng = np.random.default_rng()
         if self.n == 1:
-            value = np.random.lognormal(mean=self.mean, sigma=self.sigma, size=self.dim)
+            value = rng.lognormal(mean=self.mean, sigma=self.sigma, size=self.dim)
             return value - np.mean(value, axis=0)
         else:
 
-            value = np.random.lognormal(mean=self.mean, sigma=self.sigma, size=(self.n, self.dim))
+            value = rng.lognormal(mean=self.mean, sigma=self.sigma, size=(self.n, self.dim))
             return value - np.mean(value, axis=0)
 
 
