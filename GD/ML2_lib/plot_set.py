@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from matplotlib.cm import ScalarMappable
 from mpl_toolkits.mplot3d import Axes3D
+
 _cmap = plt.cm.jet
 
 
-def function_value_3d(f,range):
-
+def function_value_3d(f, range):
     x = np.arange(-range, range, 0.01)
     y = np.arange(-range, range, 0.01)
     X, Y = np.meshgrid(x, y)
@@ -24,16 +24,15 @@ def function_value_3d(f,range):
     return ax
 
 
-def function_value_transition(f,w_store,title="function value transition"):
+def function_value_transition(f_store, title="function value transition"):
     fig, ax = plt.subplots(1, 1, figsize=(6, 6))
-    ax.plot(f.f_opt(np.array(w_store).T))
+    ax.plot(f_store)
     ax.set_title(title)
 
     return ax
 
 
-def w_value_2d_heatmap(f,w_store,_t_max,title="w value"):
-
+def w_value_2d_heatmap(f, w_store, _t_max, title="w value"):
     w_store = np.array(w_store)
     w_star = f.w_star
     grid_x_min = min(w_store.T[0].min(), w_star[0]) - 1
@@ -71,4 +70,3 @@ def w_value_2d_heatmap(f,w_store,_t_max,title="w value"):
     plt.subplots_adjust(wspace=0.1)
 
     plt.show()
-

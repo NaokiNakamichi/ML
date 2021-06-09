@@ -24,7 +24,7 @@ class Gauss(Noise):
 
 
 class LogNormal(Noise):
-    def __init__(self, dim=1, mean=0, sigma=1, n=10):
+    def __init__(self, dim=1, mean=0, sigma=1, n=1):
         super().__init__(dim=dim, n=n)
         self.mean = mean
         self.sigma = sigma
