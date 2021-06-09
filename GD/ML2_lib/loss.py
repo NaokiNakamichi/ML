@@ -6,7 +6,15 @@ class LinearQuadraticLoss():
         pass
 
     def f(self, y, x, w):
-        return 0.5 * (y - np.dot(w, x)) ** 2
+
+        if type(w) == int:
+            return 0.5 * (y - np.dot(w, x)) ** 2
+        elif type(w) == np.ndarray:
+            if w.shape[0] == 1:
+                w = w[0]
+                return 0.5 * (y - np.dot(w, x)) ** 2
+        else:
+            raise ValueError('w は　numpy か int')
 
     def g(self, y, x, w):
         # print("y:".format(y))
