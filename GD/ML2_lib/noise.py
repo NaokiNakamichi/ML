@@ -20,7 +20,7 @@ class Gauss(Noise):
         if self.n == 1:
             return rng.normal(loc=self.mean, scale=self.sigma, size=self.dim)
 
-        return rng.normal(loc=self.mean, scale=self.sigma, size=(self.n, self.dim))
+        return rng.normal(loc=self.mean, scale=self.sigma, size=(self.dim, self.n))
 
 
 class LogNormal(Noise):
@@ -32,12 +32,13 @@ class LogNormal(Noise):
     def generate(self):
         rng = np.random.default_rng()
         if self.n == 1:
-            value = rng.lognormal(mean=self.mean, sigma=self.sigma, size=self.dim)
-            return value - np.mean(value, axis=0)
+            sample = rng.lognormal(mean=self.mean, sigma=self.sigma, size=self.dim)
+            pop_mean = np.exp(self.mean + (self.sigma ** 2) / 2)
+            return sample - pop_mean
         else:
-
-            value = rng.lognormal(mean=self.mean, sigma=self.sigma, size=(self.n, self.dim))
-            return value - np.mean(value, axis=0)
+            sample = rng.lognormal(mean=self.mean, sigma=self.sigma, size=(self.dim, self.n))
+            pop_mean = np.exp(self.mean + (self.sigma ** 2) / 2)
+            return sample - pop_mean
 
 
 class StudentT(Noise):
