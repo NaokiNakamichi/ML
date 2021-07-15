@@ -8,7 +8,7 @@ from . import noise2
 
 
 class DCSGD:
-    def __init__(self, w_star, n, E_var, X_mean, X_var, noise, loss_type, c):
+    def __init__(self, w_star, n, E_var, X_mean, X_var, noise, loss_type, c, fixed_lr=True):
         try:
             self.w_star = w_star.reshape(1, -1)
         except:
@@ -25,7 +25,9 @@ class DCSGD:
             raise ValueError("損失を確認してください。")
         self.c = c
         self.d = self.w_star.shape[1]
+        # 学習率は固定ではない。
         self.lr = 0.01 / np.sqrt(self.d)
+        self.fixed_lr = fixed_lr
 
     def learn(self, k, w_init):
 
@@ -40,7 +42,7 @@ class DCSGD:
             E = getattr(tmp, self.noise)()
             Y = np.dot(self.w_star, X.T) + E
             data = [X, Y.T]
-            core = algo_sgd.SGD(w_init=w_init, a=self.lr, t_max=core_num - 1, data=data)
+            core = algo_sgd.SGD(w_init=w_init, a=self.lr, t_max=core_num - 1, data=data,fixed_lr=self.fixed_lr)
             for _ in core:
                 core.update(self.loss_type)
             core_store.append(core.wstore)
