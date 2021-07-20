@@ -4,7 +4,7 @@ import miniball
 from tqdm.notebook import tqdm
 
 from . import algo_sgd
-from . import noise2
+from . import additive_noise
 
 
 class DCSGD:
@@ -38,7 +38,7 @@ class DCSGD:
             core_num = self.n // k
             rng = np.random.default_rng()
             X = rng.normal(loc=self.X_mean, size=(self.n, self.d), scale=self.X_var)
-            tmp = noise2.Noise(dim=self.d, mean=0, sigma=self.E_var, n=self.n)
+            tmp = additive_noise.Noise(dim=self.d, mean=0, sigma=self.E_var, n=self.n)
             E = getattr(tmp, self.noise)()
             Y = np.dot(self.w_star, X.T) + E
             data = [X, Y.T]
