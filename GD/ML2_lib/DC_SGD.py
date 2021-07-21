@@ -37,9 +37,12 @@ class DCSGD:
         for _ in range(k):
             core_num = self.n // k
             rng = np.random.default_rng()
-            X = rng.normal(loc=self.X_mean, size=(self.n, self.d), scale=self.X_var)
-            tmp = additive_noise.Noise(dim=self.d, mean=0, sigma=self.E_var, n=self.n)
+            # Xの次元数は(特徴量、サンプル数)
+            X = rng.normal(loc=self.X_mean, size=(self.d, self.n), scale=self.X_var)
+            tmp = additive_noise.Noise(dim=1, mean=0, sigma=self.E_var, n=self.n)
+            # ノイズの次元数は(1,サンプル数)
             E = getattr(tmp, self.noise)()
+            # Yの次元数は(1,サンプル数)
             Y = np.dot(self.w_star, X.T) + E
             data = [X, Y.T]
             core = algo_sgd.SGD(w_init=w_init, a=self.lr, t_max=core_num - 1, data=data,fixed_lr=self.fixed_lr)

@@ -34,7 +34,6 @@ class RVSGD:
         model_store = []
         valid_loss_store = []
 
-        son = loss.LinearQuadraticLoss()
         for _ in range(k):
             # nがデータセットのサンプル数、train_numはその半分
             train_num = self.n // 2
@@ -42,26 +41,29 @@ class RVSGD:
             core_num = train_num // k
             rng = np.random.default_rng()
             X = rng.normal(loc=self.X_mean, size=(self.n, self.d), scale=self.X_var)
-            tmp = additive_noise.Noise(dim=self.d, mean=0, sigma=self.E_var, n=self.n)
+            tmp = additive_noise.Noise(dim=1, mean=0, sigma=self.E_var, n=self.n)
             E = getattr(tmp, self.noise)()
+            # print(self.w_star.shape)
+            # print(self.d)
+            # print(E.shape)
+            # print(np.dot(self.w_star, X.T))
             Y = np.dot(self.w_star, X.T) + E
             data = [X, Y.T]
 
             core = algo_sgd.SGD(w_init=w_init, a=self.lr, t_max=core_num - 1, data=data)
             for _ in core:
-                core.update(son)
+                core.update(self.loss_type)
             core_store.append(core)
-            # :TODO fix axis
-            model_store.append(np.mean(core.wstore))
+            model_store.append(np.mean(core.wstore, axis=0))
 
         # ここまでで学習は終了,モデルの候補がk個ある
         # ここからモデルの選択
         valid_num = self.n // 2
         rng = np.random.default_rng()
         X = rng.normal(loc=self.X_mean, size=(self.n, self.d), scale=self.X_var)
-        tmp = additive_noise.Noise(dim=self.d, mean=0, sigma=self.E_var, n=self.n)
+        tmp = additive_noise.Noise(dim=1, mean=0, sigma=self.E_var, n=self.n)
         E = getattr(tmp, self.noise)()
-        Y = np.dot(self.w_star, X.T) + E
+        Y = (np.dot(self.w_star, X.T) + E).T
         tmp_loss = []
 
         # for文を使っているので要修正
@@ -69,16 +71,41 @@ class RVSGD:
             for j in range(k):
                 core_num = valid_num // k
                 try:
-                    tmp_loss.append(son.f(Y[j:j + core_num], X[j:j + core_num], model_store[i]))
+                    tmp_loss.append(
+                        self.loss_type.f(Y[j:j + core_num, :], X[j:j + core_num, :], model_store[i].T).shape)
                 except:
-                    raise ValueError()
+                    raise ValueError("なんか入力値がおかしい気がする")
             valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=3))
 
         index = np.argmin(valid_loss_store)
         w_rv = model_store[index]
-        # 過剰期待損失　E[(<(w-w^*),X>)^2]　Xが正規分布の場合　E[X^2] = X_mean^2 + X_var^2 * 単位行列
-        E_X = np.diag(np.ones(self.w_star.shape[0]) * (self.X_var ** 2) + (self.X_mean ** 2))
-        excess_risk = np.dot(np.dot(E_X, w_rv), w_rv) + np.dot(np.dot(E_X, self.w_star), self.w_star) - 2 * np.dot(
-            np.dot(E_X, self.w_star), w_rv)
+        excess_risk = self.loss_type.excess_risk_normal(X_mean=self.X_mean, X_var=self.X_var, w_star=self.w_star,
+                                                        w=w_rv)
 
-        return w_rv, excess_risk
+        return w_rv, excess_risk, core_store
+
+    def trial_k(self, max_k):
+        w_trial = []  # モデルを貯めていく、必要かどうか
+        loss_store = []  # 過剰期待損失を貯めていく
+        if max_k < 1:
+            raise ValueError("max_k は0以上の整数")
+        rng = np.random.default_rng()
+        w_init = self.w_star + rng.uniform(-self.c, self.c, size=self.d)
+        for k in range(1, max_k + 1):
+            w, excess_risk, _ = self.learn(k=k, w_init=w_init)
+            w_trial.append(w)
+            loss_store.append(excess_risk)
+
+        return np.array(w_trial), np.array(loss_store)
+
+    def many_trails(self, trial_num, max_k):
+        result_w = []  # パラメータの最終結果　トライアル数*分割数k*特徴量次元
+        result_loss = []  # 過剰期待損失の最終結果　トライアル数*分割数k
+        for _ in tqdm(range(trial_num)):
+            w_trial, loss_store = self.trial_k(max_k=max_k)
+            result_w.append(np.array(w_trial))
+            result_loss.append(np.array(loss_store))
+        return np.array(result_w), np.array(result_loss)
+
+    def transition(self, k, w_init):
+        print("設計中です。")
