@@ -38,7 +38,7 @@ class DCSGD:
             core_num = self.n // k
             rng = np.random.default_rng()
             # Xの次元数は(特徴量、サンプル数)
-            X = rng.normal(loc=self.X_mean, size=(self.d, self.n), scale=self.X_var)
+            X = rng.normal(loc=self.X_mean, size=(self.n, self.d), scale=self.X_var)
             tmp = additive_noise.Noise(dim=1, mean=0, sigma=self.E_var, n=self.n)
             # ノイズの次元数は(1,サンプル数)
             E = getattr(tmp, self.noise)()

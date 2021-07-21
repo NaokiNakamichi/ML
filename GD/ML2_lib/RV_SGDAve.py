@@ -43,17 +43,13 @@ class RVSGD:
             X = rng.normal(loc=self.X_mean, size=(self.n, self.d), scale=self.X_var)
             tmp = additive_noise.Noise(dim=1, mean=0, sigma=self.E_var, n=self.n)
             E = getattr(tmp, self.noise)()
-            # print(self.w_star.shape)
-            # print(self.d)
-            # print(E.shape)
-            # print(np.dot(self.w_star, X.T))
             Y = np.dot(self.w_star, X.T) + E
             data = [X, Y.T]
 
             core = algo_sgd.SGD(w_init=w_init, a=self.lr, t_max=core_num - 1, data=data)
             for _ in core:
                 core.update(self.loss_type)
-            core_store.append(core)
+            core_store.append(core.wstore)
             model_store.append(np.mean(core.wstore, axis=0))
 
         # ここまでで学習は終了,モデルの候補がk個ある
@@ -108,4 +104,45 @@ class RVSGD:
         return np.array(result_w), np.array(result_loss)
 
     def transition(self, k, w_init):
-        print("設計中です。")
+
+        _, _, core_store = self.learn(k=k, w_init=w_init)
+
+        w_transition = []
+        loss_transition = []
+
+        core_store = np.array(core_store)
+
+        tmp = core_store.shape
+
+        core_num, update_num, _, w_dim = tmp
+        core_store = core_store.reshape(core_num, update_num, w_dim)
+        core_store = core_store.transpose(1, 0, 2)
+
+        valid_num = self.n // 2
+        rng = np.random.default_rng()
+        X = rng.normal(loc=self.X_mean, size=(self.n, self.d), scale=self.X_var)
+        tmp = additive_noise.Noise(dim=1, mean=0, sigma=self.E_var, n=self.n)
+        E = getattr(tmp, self.noise)()
+        Y = (np.dot(self.w_star, X.T) + E).T
+        tmp_loss = []
+
+        for i in range(2,update_num):
+            w = np.mean(core_store[:i,:, :],axis=0)
+            valid_loss_store = []
+
+            for i in range(k):
+                for j in range(k):
+                    core_num = valid_num // k
+                    try:
+                        tmp_loss.append(
+                            self.loss_type.f(Y[j:j + core_num, :], X[j:j + core_num, :], w[i].T))
+                    except:
+                        raise ValueError("なんか入力値がおかしい気がする")
+                valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=3))
+
+            index = np.argmin(valid_loss_store)
+            w_rv = w[index].reshape(1,self.d)
+            excess_risk = self.loss_type.excess_risk_normal(X_mean=self.X_mean, X_var=self.X_var, w_star=self.w_star,
+                                                            w=w_rv)
+            loss_transition.append(excess_risk)
+        return loss_transition
