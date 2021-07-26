@@ -10,6 +10,9 @@ class LinearQuadraticLoss():
         if type(w) == np.float_:
             return np.mean(0.5 * ((y - np.dot(x, w)) ** 2),axis=0)
         elif type(w) == np.ndarray:
+            # print("f np.dot(x, w)) {}".format(np.dot(x, w)))
+            # print("y {}".format(y))
+            # print("f {}".format(np.mean(0.5 * ((y - np.dot(x, w)) ** 2),axis=0)))
             return np.mean(0.5 * ((y - np.dot(x, w)) ** 2),axis=0)
         else:
             raise ValueError('w のデータ型')
@@ -18,6 +21,7 @@ class LinearQuadraticLoss():
         # print("y:".format(y))
         #
         # print("w * x".format(w * x))
+        # print("g  {}".format(- x * (y - np.dot(w, x))))
         return - x * (y - np.dot(w, x))
 
     def predict(self, x, w):
