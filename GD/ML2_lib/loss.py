@@ -8,9 +8,9 @@ class LinearQuadraticLoss():
     def f(self, y, x, w):
 
         if type(w) == np.float_:
-            return 0.5 * ((y - np.dot(w, x)) ** 2)
+            return np.mean(0.5 * ((y - np.dot(x, w)) ** 2),axis=0)
         elif type(w) == np.ndarray:
-            return 0.5 * ((y - np.dot(x, w)) ** 2)
+            return np.mean(0.5 * ((y - np.dot(x, w)) ** 2),axis=0)
         else:
             raise ValueError('w のデータ型')
 
