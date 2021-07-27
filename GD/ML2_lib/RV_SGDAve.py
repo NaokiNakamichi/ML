@@ -199,8 +199,8 @@ class RVSGDRealData(RVSGD):
         self.lr = lr
         # 学習率は固定かどうか選択する。
         self.fixed_lr = fixed_lr
-        self.w = 0
-        self.core_store = 0
+        self.w = np.array(0)
+        self.core_store = []
 
 
     def learn_data(self, k, w_init, x, y):
