@@ -211,7 +211,7 @@ class RVSGDRealData(RVSGD):
 
     def transition(self, k, x, y):
 
-        valid_num = len(self.core_store) // 2
+        valid_num = y.shape[0] // 2
         valid_x = x[valid_num:]
         valid_y = y[valid_num:]
         loss_transition = []

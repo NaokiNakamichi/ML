@@ -5,6 +5,7 @@ from tqdm.notebook import tqdm
 
 from . import algo_sgd
 from . import additive_noise
+from . import merge
 
 
 class DCSGD:
@@ -24,9 +25,9 @@ class DCSGD:
         model_store = []
         core_store = []
 
-        for _ in range(k):
+        for i in range(k):
             core_num = y.shape[0] // k
-            data = [x, y]
+            data = [x[i:i+core_num], y[i:i+core_num]]
             # print(data)
             # print(data[0].shape)
             # print(data[1].shape)
@@ -37,6 +38,9 @@ class DCSGD:
             model_store.append(core.w)
 
         w_dc, _ = miniball.get_bounding_ball(np.array(model_store).reshape((-1, x.shape[1])), epsilon=1e-7)
+        # w_dc = merge.median(np.array(model_store).reshape((-1, x.shape[1])))
+        # print(w_dc)
+        # print(model_store)
         w_dc = w_dc.reshape(1, -1)
 
         return w_dc, core_store
