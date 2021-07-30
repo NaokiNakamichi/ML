@@ -7,6 +7,12 @@ from . import algo_sgd
 from . import additive_noise
 from . import merge
 
+import torch
+from torch import nn
+import torch.nn.functional as F
+from torch.autograd import Variable
+import torch.optim as optim
+
 
 class DCSGD:
     def __init__(self, loss_type, c, lr=0.01, fixed_lr=True):
@@ -177,3 +183,31 @@ class DCSGDRealData(DCSGD):
             loss_transition.append(self.loss_type.f(y=y, x=x, w=w.T))
 
         return w_transition, loss_transition
+
+
+class DCSGDByTorch:
+    def __init__(self, loss, lr):
+        self.loss = loss
+        self.lr = lr
+
+
+    def learn(self,k,x,y,model):
+        models = []
+        optimizer = optim.SGD(model.parameters(), lr=self.lr)
+        sample_num = y.shape[0]
+        sep_num = sample_num // k
+        for i in range(k):
+            for j in range(sep_num):
+                ## pytorchでは勾配を蓄積する仕組みなので更新前に初期化しておきます
+                optimizer.zero_grad()
+                ## feed forward(つまり予測させます)
+                output = model(x[i:i+sep_num])
+                ## 予実差からの誤差を決めます。nll_lossは、Negative Log Likelihood(負の対数尤度)ですね。
+                loss = F.nll_loss(output, y[i:i+sep_num])
+
+                ## Back Propagation
+                loss.backward()
+            models.append(list(model.parameters())[0])
+
+        return torch.stack(models)
+
