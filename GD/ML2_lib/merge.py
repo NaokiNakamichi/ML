@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.spatial.distance import cdist, euclidean
 import miniball
+import torch
+
 
 def geomed(X, eps=1e-5):
     y = np.mean(X, 0)
@@ -22,18 +24,23 @@ def geomed(X, eps=1e-5):
         else:
             R = (T - y) * Dinvs
             r = np.linalg.norm(R)
-            rinv = 0 if r == 0 else num_zeros/r
-            y1 = max(0, 1-rinv)*T + min(1, rinv)*y
+            rinv = 0 if r == 0 else num_zeros / r
+            y1 = max(0, 1 - rinv) * T + min(1, rinv) * y
 
         if euclidean(y, y1) < eps:
             return y1
 
         y = y1
 
+
 def median(X):
     return np.median(X, axis=0)
 
 
-def smallball(X):
+def small_ball(X):
     tmp = np.array(X)
     return miniball.get_bounding_ball(tmp)[0]
+
+
+def median_by_torch(w):
+    return torch.median(w,dim=0)

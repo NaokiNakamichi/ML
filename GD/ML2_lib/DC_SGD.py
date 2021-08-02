@@ -1,5 +1,6 @@
 import numpy as np
 import miniball
+import copy
 
 from tqdm.notebook import tqdm
 
@@ -33,7 +34,7 @@ class DCSGD:
 
         for i in range(k):
             core_num = y.shape[0] // k
-            data = [x[i:i+core_num], y[i:i+core_num]]
+            data = [x[i:i + core_num], y[i:i + core_num]]
             # print(data)
             # print(data[0].shape)
             # print(data[1].shape)
@@ -186,28 +187,119 @@ class DCSGDRealData(DCSGD):
 
 
 class DCSGDByTorch:
-    def __init__(self, loss, lr):
-        self.loss = loss
+    def __init__(self, lr):
         self.lr = lr
+        self.model = nn.Module()
 
-
-    def learn(self,k,x,y,model):
-        models = []
-        optimizer = optim.SGD(model.parameters(), lr=self.lr)
+    def learn(self, k, x, y, model):
+        x = torch.tensor(x).float()
+        y = torch.LongTensor(y)
+        w_list = []
+        bias_list = []
+        w_stack = []
+        b_stack = []
         sample_num = y.shape[0]
         sep_num = sample_num // k
         for i in range(k):
+            model.parameter_init()
+            w_transition = []
+            b_transition = []
             for j in range(sep_num):
-                ## pytorchでは勾配を蓄積する仕組みなので更新前に初期化しておきます
+                optimizer = optim.SGD(model.parameters(), lr=self.lr)
                 optimizer.zero_grad()
-                ## feed forward(つまり予測させます)
-                output = model(x[i:i+sep_num])
-                ## 予実差からの誤差を決めます。nll_lossは、Negative Log Likelihood(負の対数尤度)ですね。
-                loss = F.nll_loss(output, y[i:i+sep_num])
+                output = model(x[i:i + sep_num])
+                loss = F.nll_loss(output, y[i:i + sep_num])
 
-                ## Back Propagation
+                # Back Propagation
                 loss.backward()
-            models.append(list(model.parameters())[0])
+                optimizer.step()
 
-        return torch.stack(models)
+                # 正解率の計算
+                prediction = output.data.max(1)[1]
+                accuracy = prediction.eq(y[i:i + sep_num]).sum().numpy() / y[i:i + sep_num].shape[0]
 
+                w_transition.append(copy.deepcopy(model.fc1.weight))
+                b_transition.append(copy.deepcopy(model.fc1.bias))
+
+
+
+            w_stack.append(torch.stack(w_transition))
+            b_stack.append(torch.stack(b_transition))
+            w_list.append(copy.deepcopy(model.fc1.weight))
+            bias_list.append(copy.deepcopy(model.fc1.bias))
+
+        merge_w = merge.median_by_torch(torch.stack(w_list)).values
+        merge_b = merge.median_by_torch(torch.stack(bias_list)).values
+
+        with torch.no_grad():
+            model.fc1.weight.data = merge_w
+            model.fc1.bias.data = merge_b
+
+        # print(w_list)
+        # print(merge_w)
+        #
+        # print(bias_list)
+        # print(merge_b)
+
+        self.model = model
+
+        return self.model, w_stack, b_stack
+
+    def predict(self, x, y):
+        x = torch.tensor(x).float()
+        y = torch.LongTensor(y)
+        output = self.model(x)
+        prediction = output.data.max(1)[1]
+        accuracy = prediction.eq(y).sum().numpy() / y.shape[0]
+        print("予測")
+        print(prediction)
+        print("答え")
+        print(y)
+        print("正解率")
+        print(accuracy)
+
+    def transition(self, k, train_x, train_y, transition_x, transition_y,model):
+        # train_x = torch.tensor(train_x).float()
+        # train_y = torch.LongTensor(train_y)
+        _, w_stack, b_stack = self.learn(k, train_x, train_y, model)
+        x = torch.tensor(transition_x).float()
+        y = torch.LongTensor(transition_y)
+        w_tmp = torch.stack(w_stack).permute(1, 0, 2, 3)
+        b_tmp = torch.stack(b_stack).permute(1, 0, 2)
+        loss_transition = []
+        for w, b in zip(w_tmp, b_tmp):
+            merge_w = merge.median_by_torch(w).values
+            merge_b = merge.median_by_torch(b).values
+            with torch.no_grad():
+                model.fc1.weight.data = merge_w
+                model.fc1.bias.data = merge_b
+
+            output = model(x)
+            loss = F.nll_loss(output, y)
+            loss_transition.append(loss.item())
+
+        return loss_transition, model
+
+    def multiple_k_transition(self,k_list,train_x, train_y, transition_x, transition_y,model):
+        k_transition = []
+        for k in k_list:
+            k_transition.append(self.transition(k=k, train_x=train_x, train_y=train_y, transition_x=transition_x, transition_y=transition_y,
+                        model=model)[0])
+
+        return k_transition
+
+    def multiple_k_accuracy(self,k_list,train_x, train_y, transition_x, transition_y,model):
+        k_accuracy = []
+        for k in k_list:
+            m = self.transition(k=k, train_x=train_x, train_y=train_y, transition_x=transition_x,
+                                                transition_y=transition_y,
+                                                model=model)[1]
+
+            x = torch.tensor(transition_x).float()
+            y = torch.LongTensor(transition_y)
+            output = m(x)
+            prediction = output.data.max(1)[1]
+            accuracy = prediction.eq(y).sum().numpy() / y.shape[0]
+            k_accuracy.append(accuracy)
+
+        return k_accuracy
