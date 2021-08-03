@@ -1,10 +1,17 @@
 import numpy as np
 from tqdm.notebook import tqdm
 
-from . import loss
 from . import algo_sgd
 from . import additive_noise
 from . import valid
+
+import torch
+from torch import nn
+import torch.nn.functional as F
+import torch.optim as optim
+from torch.optim.swa_utils import AveragedModel
+
+import copy
 
 
 class RVSGD:
@@ -202,7 +209,6 @@ class RVSGDRealData(RVSGD):
         self.w = np.array(0)
         self.core_store = []
 
-
     def learn_data(self, k, w_init, x, y):
         self.w, self.core_store = self.learn(k, w_init, x, y)
 
@@ -247,9 +253,75 @@ class RVSGDRealData(RVSGD):
 
             index = np.argmin(valid_loss_store)
             w_rv = w[index].reshape(1, -1)
-            excess_risk = self.loss_type.f(y=valid_y,x=valid_x,w=w_rv.T)
+            excess_risk = self.loss_type.f(y=valid_y, x=valid_x, w=w_rv.T)
             loss_transition.append(excess_risk)
         # print(np.array(tmp_loss).shape)
         # print(valid_loss_store)
         return loss_transition
+
+
+class RVSGDByTorch():
+    def __init__(self, lr):
+        self.lr = lr
+        self.model = nn.Module()
+
+    def learn(self, k, x, y, model):
+        x = torch.tensor(x).float()
+        y = torch.LongTensor(y)
+        w_list = []
+        bias_list = []
+        w_stack = []
+        b_stack = []
+        valid_loss_store = []
+        sample_num = y.shape[0]
+        harf_num = sample_num // 2
+        sep_num = (sample_num // 2) // k
+        for i in range(k):
+            model.parameter_init()
+            w_transition = []
+            b_transition = []
+            for j in range(sep_num):
+                optimizer = optim.SGD(model.parameters(), lr=self.lr)
+                optimizer.zero_grad()
+                output = model(x[i:i + sep_num])
+                loss = F.nll_loss(output, y[i:i + sep_num])
+
+                # Back Propagation
+                loss.backward()
+                optimizer.step()
+
+                # 正解率の計算
+                prediction = output.data.max(1)[1]
+                accuracy = prediction.eq(y[i:i + sep_num]).sum().numpy() / y[i:i + sep_num].shape[0]
+
+                w_transition.append(copy.deepcopy(model.fc1.weight))
+                b_transition.append(copy.deepcopy(model.fc1.bias))
+
+            w_stack.append(torch.stack(w_transition))
+            b_stack.append(torch.stack(b_transition))
+            w_list.append(copy.deepcopy(model.fc1.weight))
+            bias_list.append(copy.deepcopy(model.fc1.bias))
+
+        for i in range(k):
+            tmp_loss = []
+            for j in range(k):
+                with torch.no_grad():
+                    model.fc1.weight.data = w_list[i]
+                    model.fc1.bias.data = bias_list[i]
+                output = model(x[j + harf_num:j + harf_num + sep_num])
+                loss = F.nll_loss(output, y[j + harf_num:j + harf_num + sep_num])
+                tmp_loss.append(loss.item())
+            # print(tmp_loss)
+            # print(w_list)
+            valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=3))
+
+        index = np.argmin(valid_loss_store)
+        w_valid = w_list[index]
+        b_valid = bias_list[index]
+        with torch.no_grad():
+            model.fc1.weight.data = w_valid
+            model.fc1.bias.data = b_valid
+        self.model = model
+
+        return self.model, w_stack,b_stack
 

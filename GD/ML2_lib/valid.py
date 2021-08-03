@@ -14,3 +14,8 @@ def median_of_means(seq, n_blocks):
     # 中央値を返す
     return np.median(means)
 
+def median_of_means_by_torch(seq,n_blocks):
+    if n_blocks > len(seq):
+        n_blocks = int(np.ceil(len(seq) / 2))
+
+
