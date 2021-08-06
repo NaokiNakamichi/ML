@@ -274,10 +274,12 @@ class RVSGDByTorch():
         b_stack = []
         valid_loss_store = []
         sample_num = y.shape[0]
-        harf_num = sample_num // 2
+        half_num = sample_num // 2
         sep_num = (sample_num // 2) // k
+        swa_model = nn.Module()
         for i in range(k):
             model.parameter_init()
+            swa_model = AveragedModel(model)
             w_transition = []
             b_transition = []
             for j in range(sep_num):
@@ -290,6 +292,9 @@ class RVSGDByTorch():
                 loss.backward()
                 optimizer.step()
 
+                if j > 5:
+                    swa_model.update_parameters(model)
+
                 # 正解率の計算
                 prediction = output.data.max(1)[1]
                 accuracy = prediction.eq(y[i:i + sep_num]).sum().numpy() / y[i:i + sep_num].shape[0]
@@ -299,8 +304,9 @@ class RVSGDByTorch():
 
             w_stack.append(torch.stack(w_transition))
             b_stack.append(torch.stack(b_transition))
-            w_list.append(copy.deepcopy(model.fc1.weight))
-            bias_list.append(copy.deepcopy(model.fc1.bias))
+            # :TODO 線形のため一層のみのスタックになって。要改善
+            w_list.append(copy.deepcopy(swa_model.module.fc1.weight))
+            bias_list.append(copy.deepcopy(swa_model.module.fc1.bias))
 
         for i in range(k):
             tmp_loss = []
@@ -308,8 +314,8 @@ class RVSGDByTorch():
                 with torch.no_grad():
                     model.fc1.weight.data = w_list[i]
                     model.fc1.bias.data = bias_list[i]
-                output = model(x[j + harf_num:j + harf_num + sep_num])
-                loss = F.nll_loss(output, y[j + harf_num:j + harf_num + sep_num])
+                output = model(x[j + half_num:j + half_num + sep_num])
+                loss = F.nll_loss(output, y[j + half_num:j + half_num + sep_num])
                 tmp_loss.append(loss.item())
             # print(tmp_loss)
             # print(w_list)
@@ -323,5 +329,56 @@ class RVSGDByTorch():
             model.fc1.bias.data = b_valid
         self.model = model
 
-        return self.model, w_stack,b_stack
+        return self.model, w_stack, b_stack
+
+    def transition(self, k, train_x, train_y, transition_x, transition_y,model):
+        _, w_stack, b_stack = self.learn(k, train_x, train_y, model)
+        x = torch.tensor(transition_x).float()
+        y = torch.LongTensor(transition_y)
+        train_x = torch.tensor(train_x).float()
+        train_y = torch.LongTensor(train_y)
+        w_tmp = torch.stack(w_stack).permute(1, 0, 2, 3)
+        b_tmp = torch.stack(b_stack).permute(1, 0, 2)
+        half_num = train_x.shape[0] // 2
+        loss_transition = []
+
+        sep_num = w_tmp.shape[0]
+        for update_i in range(2,w_tmp.shape[0]):
+            valid_loss_store = []
+            w_list = w_tmp[:update_i].mean(0)
+            b_list = b_tmp[:update_i].mean(0)
+            for i in range(k):
+                tmp_loss = []
+                for j in range(k):
+
+                    with torch.no_grad():
+                        model.fc1.weight.data = w_list[i]
+                        model.fc1.bias.data = b_list[i]
+                    output = model(train_x[j + half_num:j + half_num + sep_num])
+
+                    loss = F.nll_loss(output, train_y[j + half_num:j + half_num + sep_num])
+                    tmp_loss.append(loss.item())
+
+                # print(tmp_loss)
+                # print(w_list)
+                valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=3))
+            index = np.argmin(valid_loss_store)
+            w_rv = w_list[index]
+            b_rv = b_list[index]
+            with torch.no_grad():
+                model.fc1.weight.data = w_rv
+                model.fc1.bias.data = b_rv
+
+            tr_output = model(x)
+            tr_loss = F.nll_loss(tr_output, y)
+            print(tr_loss)
+
+            loss_transition.append(tr_loss)
+
+        return loss_transition
+
+
+
+
+
 
