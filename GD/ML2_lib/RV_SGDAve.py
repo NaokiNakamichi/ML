@@ -370,13 +370,35 @@ class RVSGDByTorch():
                 model.fc1.bias.data = b_rv
 
             tr_output = model(x)
-            tr_loss = F.nll_loss(tr_output, y)
-            print(tr_loss)
+            tr_loss = F.nll_loss(tr_output, y).item()
 
             loss_transition.append(tr_loss)
 
-        return loss_transition
+        return loss_transition, model
 
+    def multiple_k_transition(self,k_list,train_x, train_y, transition_x, transition_y,model):
+        k_transition = []
+        for k in k_list:
+            k_transition.append(self.transition(k=k, train_x=train_x, train_y=train_y, transition_x=transition_x, transition_y=transition_y,
+                        model=model)[0])
+
+        return k_transition
+
+    def multiple_k_accuracy(self,k_list,train_x, train_y, transition_x, transition_y,model):
+        k_accuracy = []
+        for k in k_list:
+            m = self.transition(k=k, train_x=train_x, train_y=train_y, transition_x=transition_x,
+                                                transition_y=transition_y,
+                                                model=model)[1]
+
+            x = torch.tensor(transition_x).float()
+            y = torch.LongTensor(transition_y)
+            output = m(x)
+            prediction = output.data.max(1)[1]
+            accuracy = prediction.eq(y).sum().numpy() / y.shape[0]
+            k_accuracy.append(accuracy)
+
+        return k_accuracy
 
 
 
