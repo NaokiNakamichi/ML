@@ -70,3 +70,20 @@ def w_value_2d_heatmap(f, w_store, _t_max, title="w value"):
     plt.subplots_adjust(wspace=0.1)
 
     plt.show()
+
+
+def box_plot_k(result, k_list, k_string, title):
+    fdic = {
+        "size": 20,
+    }
+
+    columns = k_string
+    fig = plt.figure(figsize=(10.0, 8.0))
+    ax1 = fig.add_subplot(111)
+
+    ax1.boxplot(result[:, k_list])
+    ax1.set_xticklabels(columns, fontsize=20)
+    ax1.set_title(f'R(w)-R^*{title}', fontsize=20)
+    ax1.set_xlabel('k', fontdict=fdic)
+
+    plt.show()
