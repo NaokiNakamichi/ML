@@ -87,3 +87,18 @@ def box_plot_k(result, k_list, k_string, title):
     ax1.set_xlabel('k', fontdict=fdic)
 
     plt.show()
+
+
+def transition(result, title, k_list,xlim=None,ylim=None):
+    fig = plt.figure(figsize=(10.0, 8.0))
+    ax1 = fig.add_subplot(111)
+    ax1.set_title(title)
+    for i in result:
+        ax1.plot(i)
+    ax1.set_xlabel("step")
+    if xlim is not None:
+        ax1.set_xlim(*xlim)
+    if ylim is not None:
+        ax1.set_ylim(*ylim)
+    ax1.legend(labels=[f'k = {k}' for k in k_list])
+    plt.show()

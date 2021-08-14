@@ -139,6 +139,13 @@ class DCSGDSimulation(DCSGD):
 
         return w_transition, loss_transition
 
+    def multiple_k_transition(self,k_list,w_init):
+        k_transition = []
+        for k in k_list:
+            k_transition.append(self.transition(k=k,w_init=w_init)[1])
+
+        return k_transition
+
 
 class DCSGDRealData(DCSGD):
     def __init__(self, loss_type, c, lr=0.01, fixed_lr=True):
