@@ -76,7 +76,7 @@ class DCSGDSimulation(DCSGD):
             raise ValueError("損失を確認してください。")
         self.c = c
         self.d = self.w_star.shape[1]
-        self.lr = 0.01 / np.sqrt(self.d)
+        self.lr = lr / np.sqrt(self.d)
         # 学習率は固定かどうか選択する。
         self.fixed_lr = fixed_lr
 
@@ -139,10 +139,10 @@ class DCSGDSimulation(DCSGD):
 
         return w_transition, loss_transition
 
-    def multiple_k_transition(self,k_list,w_init):
+    def multiple_k_transition(self, k_list, w_init):
         k_transition = []
         for k in k_list:
-            k_transition.append(self.transition(k=k,w_init=w_init)[1])
+            k_transition.append(self.transition(k=k, w_init=w_init)[1])
 
         return k_transition
 
@@ -228,8 +228,6 @@ class DCSGDByTorch:
                 w_transition.append(copy.deepcopy(model.fc1.weight))
                 b_transition.append(copy.deepcopy(model.fc1.bias))
 
-
-
             w_stack.append(torch.stack(w_transition))
             b_stack.append(torch.stack(b_transition))
             w_list.append(copy.deepcopy(model.fc1.weight))
@@ -265,7 +263,7 @@ class DCSGDByTorch:
         print("正解率")
         print(accuracy)
 
-    def transition(self, k, train_x, train_y, transition_x, transition_y,model):
+    def transition(self, k, train_x, train_y, transition_x, transition_y, model):
         # train_x = torch.tensor(train_x).float()
         # train_y = torch.LongTensor(train_y)
         _, w_stack, b_stack = self.learn(k, train_x, train_y, model)
@@ -287,20 +285,21 @@ class DCSGDByTorch:
 
         return loss_transition, model
 
-    def multiple_k_transition(self,k_list,train_x, train_y, transition_x, transition_y,model):
+    def multiple_k_transition(self, k_list, train_x, train_y, transition_x, transition_y, model):
         k_transition = []
         for k in k_list:
-            k_transition.append(self.transition(k=k, train_x=train_x, train_y=train_y, transition_x=transition_x, transition_y=transition_y,
-                        model=model)[0])
+            k_transition.append(self.transition(k=k, train_x=train_x, train_y=train_y, transition_x=transition_x,
+                                                transition_y=transition_y,
+                                                model=model)[0])
 
         return k_transition
 
-    def multiple_k_accuracy(self,k_list,train_x, train_y, transition_x, transition_y,model):
+    def multiple_k_accuracy(self, k_list, train_x, train_y, transition_x, transition_y, model):
         k_accuracy = []
         for k in k_list:
             m = self.transition(k=k, train_x=train_x, train_y=train_y, transition_x=transition_x,
-                                                transition_y=transition_y,
-                                                model=model)[1]
+                                transition_y=transition_y,
+                                model=model)[1]
 
             x = torch.tensor(transition_x).float()
             y = torch.LongTensor(transition_y)
