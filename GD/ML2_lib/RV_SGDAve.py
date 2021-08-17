@@ -103,7 +103,7 @@ class RVSGDSimulation(RVSGD):
             raise ValueError("損失を確認してください。")
         self.c = c
         self.d = self.w_star.shape[1]
-        self.lr = 0.01 / np.sqrt(self.d)
+        self.lr = lr / np.sqrt(self.d)
         # 学習率は固定かどうか選択する。
         self.fixed_lr = fixed_lr
 
