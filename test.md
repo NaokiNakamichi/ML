@@ -61,3 +61,14 @@ DC-SGD,RV-SGDAveにて
 ![](assets/Rtr_RVSGDAve_lognormal_1.75.png)
 
 AveragedSGDが効いているのかサンプル数が足りない場合は分割すると学習が足りなく、また分割しない場合でも学習は安定している。
+
+
+4. DC-SGD ノイズ対数正規分布, 分散1.75
+    - サンプル数 2500
+    - 次元数 512
+![](assets/R_DCSGD_lognormal_1.75_DImension_512.png)
+![](assets/Rtr_DCSGD_lognormal_1.75_DImension_512.png)
+
+次元数を増やした場合さらに深い学習が必要になりそうで分割した場合に不利になるか
+
+
