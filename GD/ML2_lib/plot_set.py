@@ -45,10 +45,10 @@ def w_value_2d_heatmap(f, w_store, _t_max, title="w value"):
     Z = f.f_opt([X, Y])
 
     fig, axes = plt.subplots(1, 1, figsize=(6, 6))
-    axes.pcolor(X, Y, Z, cmap=plt.cm.rainbow)
+    axes.pcolor(X, Y, Z, cmap=plt.cm.rainbow,shading='auto')
     # wの軌跡
     axes.plot(w_store.T[0], w_store.T[1], c="k", alpha=0.2, linewidth=1)
-    c = np.linspace(0, _t_max, len(w_store))
+    c = np.linspace(0, _t_max, w_store.shape[0])
     axes.scatter(w_store.T[0], w_store.T[1], c=c, cmap=plt.cm.hot, linewidths=0.01, alpha=1, s=10)
 
     # 始点(黄色)、終点（緑）、真値（赤）

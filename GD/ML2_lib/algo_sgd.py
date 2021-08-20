@@ -31,12 +31,22 @@ class SGD(Iterative):
 
     # 入力は.gという勾配を算出することのできるモデル
     def update(self, model):
-        x, y = self.data[0][self.t], self.data[1][self.t]
-        grad = model.g(x=x, w=self.w, y=y)
-        if self.fixed_lr:
-            self.w = self.w - self.a * grad
-        else:
-            try:
-                self.w = self.w - self.a * grad / self.t
-            except:
+        if model.type == "loss_with_data":
+            x, y = self.data[0][self.t], self.data[1][self.t]
+            grad = model.g(x=x, w=self.w, y=y)
+            if self.fixed_lr:
                 self.w = self.w - self.a * grad
+            else:
+                try:
+                    self.w = self.w - self.a * grad / self.t
+                except:
+                    self.w = self.w - self.a * grad
+        else:
+            grad = model.g_opt(w=self.w)
+            if self.fixed_lr:
+                self.w = self.w - self.a * grad
+            else:
+                try:
+                    self.w = self.w - self.a * grad / self.t
+                except:
+                    self.w = self.w - self.a * grad
