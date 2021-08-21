@@ -71,6 +71,7 @@ class RosenBrock:
         if self.noise_type:
             tmp = tmp + self.generate_noise()
 
+
         return tmp
 
     def generate_noise(self):

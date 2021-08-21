@@ -4,6 +4,7 @@ from tqdm.notebook import tqdm
 from . import algo_sgd
 from . import additive_noise
 from . import valid
+from . import model_opt
 
 import torch
 from torch import nn
@@ -411,5 +412,106 @@ class RVSGDByTorch():
 
 
 
+class RVSGDByW():
+    def __init__(self, model_opt, c,n, lr=0.01, fixed_lr=True):
+        self.model_opt = model_opt
+        try:
+            self.model_opt.type
+        except:
+            raise ValueError("損失を確認してください。")
+        self.c = c
+        # 学習率は固定ではない。
+        self.lr = lr
+        self.fixed_lr = fixed_lr
+        self.n = n
 
+    def learn(self, k, w_init):
+
+        model_store = []
+        core_store = []
+        valid_loss_store = []
+
+
+        # nがデータセットのサンプル数、train_numはその半分
+        train_num = self.n // 2
+        # core_num は　k分割した後のサンプル数、
+        core_num = train_num // k
+
+        for i in range(k):
+            # print(data)
+            core = algo_sgd.SGD(w_init=w_init, a=self.lr, t_max=core_num - 1, fixed_lr=self.fixed_lr)
+            for _ in core:
+                core.update(self.model_opt)
+            core_store.append(core.wstore)
+            model_store.append(np.mean(core.wstore, axis=0))
+
+        valid_num = train_num
+
+        # print("valid_y {}".format(valid_y[0:0 + core_num, :].shape))
+        # print("valid_x {}".format(valid_x[0:0 + core_num, :].shape))
+        # print(self.loss_type.f(valid_y[0:0 + core_num, :], valid_x[0:0 + core_num, :], model_store[0].T).shape)
+
+        # for文を使っているので要修正
+        for i in range(k):
+            tmp_loss = []
+            for j in range(k):
+                try:
+                    tmp_loss.append(
+                        self.model_opt.f_opt(model_store[i].T))
+                except:
+                    raise ValueError("なんか入力値がおかしい気がする")
+            valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=3))
+
+        index = np.argmin(valid_loss_store)
+        print(valid_loss_store)
+        w_rv = model_store[index]
+        print(model_store)
+
+        return w_rv, core_store
+
+    def transition(self, k, w_init):
+        w_transition = []
+        f_transition = []
+        _, core_store = self.learn(k,w_init)
+
+        core_store = np.array(core_store)
+
+        tmp = core_store.shape
+        core_num, update_num, w_dim = tmp
+        core_store = core_store.reshape(core_num, update_num, w_dim)
+        core_store = core_store.transpose(1, 0, 2)
+        print(core_store.shape)
+
+        for i in range(update_num):
+            w, _ = miniball.get_bounding_ball(core_store[i, :])
+            w_transition.append(w)
+            f_value = self.model_opt.f_opt(w.T)
+            f_transition.append(f_value)
+
+        return w_transition, f_transition
+
+    def trial_k(self, max_k, w_init):
+
+        w_trial = []  # モデルを貯めていく、必要かどうか
+        loss_store = []  # 過剰期待損失を貯めていく
+        if max_k < 1:
+            raise ValueError("max_k は1以上の整数")
+
+        for k in range(1, max_k + 1):
+            w, _ = self.learn(k=k, w_init=w_init)
+            w_trial.append(w)
+
+            f_value = self.model_opt.f_opt(w.T)
+            loss_store.append(f_value[0])
+
+        return np.array(w_trial), np.array(loss_store)
+
+    def many_trails(self, trial_num, max_k,w_init):
+        result_w = []  # パラメータの最終結果　トライアル数*分割数k*特徴量次元
+        result_loss = []  # 過剰期待損失の最終結果　トライアル数*分割数k
+        for _ in tqdm(range(trial_num)):
+            w_trial, loss_store = self.trial_k(max_k=max_k,w_init=w_init)
+            result_w.append(np.array(w_trial))
+            result_loss.append(np.array(loss_store))
+        return np.array(result_w), np.array(result_loss)
 
