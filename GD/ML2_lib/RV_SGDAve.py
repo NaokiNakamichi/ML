@@ -463,9 +463,7 @@ class RVSGDByW():
             valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=3))
 
         index = np.argmin(valid_loss_store)
-        print(valid_loss_store)
         w_rv = model_store[index]
-        print(model_store)
 
         return w_rv, core_store
 
@@ -482,10 +480,24 @@ class RVSGDByW():
         core_store = core_store.transpose(1, 0, 2)
         print(core_store.shape)
 
-        for i in range(update_num):
-            w, _ = miniball.get_bounding_ball(core_store[i, :])
-            w_transition.append(w)
-            f_value = self.model_opt.f_opt(w.T)
+        for i_update in range(2, update_num):
+            w = np.mean(core_store[:i_update, :, :], axis=0)
+
+            valid_loss_store = []
+
+            for i in range(k):
+                tmp_loss = []
+                for j in range(k):
+                    try:
+                        tmp_loss.append(self.model_opt.f_opt(w[i].reshape(1, -1).T))
+                    except:
+                        raise ValueError("なんか入力値がおかしい気がする")
+                valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=3))
+
+            index = np.argmin(valid_loss_store)
+            w_rv = w[index]
+            w_transition.append(w_rv)
+            f_value = self.model_opt.f_opt(w=w_rv)
             f_transition.append(f_value)
 
         return w_transition, f_transition
@@ -502,7 +514,7 @@ class RVSGDByW():
             w_trial.append(w)
 
             f_value = self.model_opt.f_opt(w.T)
-            loss_store.append(f_value[0])
+            loss_store.append(f_value)
 
         return np.array(w_trial), np.array(loss_store)
 
