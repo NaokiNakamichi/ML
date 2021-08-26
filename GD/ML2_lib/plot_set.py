@@ -83,7 +83,7 @@ def box_plot_k(result, k_list, k_string, title):
 
     ax1.boxplot(result[:, k_list])
     ax1.set_xticklabels(columns, fontsize=20)
-    ax1.set_title(f'R(w)-R^*{title}', fontsize=20)
+    ax1.set_title(f'{title}', fontsize=20)
     ax1.set_xlabel('k', fontdict=fdic)
 
     plt.show()

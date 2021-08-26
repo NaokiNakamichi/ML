@@ -2,6 +2,7 @@ import numpy as np
 
 from . import additive_noise
 
+
 class LinearQuadraticLoss():
     def __init__(self):
         self.type = "loss_with_data"
@@ -37,7 +38,7 @@ class LinearQuadraticLoss():
 
 
 class RosenBrock:
-    def __init__(self,d,noise_type=None,E_var=1.75):
+    def __init__(self, d, noise_type=None, E_var=1.75):
         self.type = "loss_with_w"
         self.d = d
         self.w_star = np.ones(d)
@@ -57,20 +58,18 @@ class RosenBrock:
 
     def g_opt(self, w):
         w = np.array(w)
-        d = w.shape[0]
-        self.w_star = np.ones(d)
+        self.w_star = np.ones(self.d)
         tmp = np.zeros(w.shape)
-        for i in range(d):
+        for i in range(self.d):
             if i == 0:
                 tmp[i] = 100 * (-4) * w[i] * (w[i + 1] - w[i] ** 2) + 2 * (w[i] - 1)
-            elif i == d - 1:
+            elif i == self.d - 1:
                 tmp[i] = 100 * 2 * (w[i] - w[i - 1] ** 2)
             else:
                 tmp[i] = 100 * (-4) * w[i] * (w[i + 1] - w[i] ** 2) + 2 * (w[i] - 1) + 100 * 2 * (w[i] - w[i - 1] ** 2)
 
         if self.noise_type:
             tmp = tmp + self.generate_noise()
-
 
         return tmp
 
