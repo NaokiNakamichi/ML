@@ -21,8 +21,8 @@ def n_exp(d, trial_num, lr, c, noise, E_var, w_init, k_list, n_list):
         plot_set.box_plot_k(result, k_list, k_string, title)
 
         now = datetime.datetime.now()
-        df = pd.DataFrame(result[:, k_list], columns=k_string).describe()
-        df.to_csv(f"save_result_data/{now:%m月%d日%H:%M:%S}_noise_{noise}_trial_num_{trial_num}_D{d}_sample_num{n}.csv")
+        df = pd.DataFrame(result[:, k_list], columns=k_string)
+        df.to_csv(f"save_result_data/{now:%m月%d日%H:%M:%S}_noise_{noise}_trial_num_{trial_num}_D{d}_sample_num{n}_DC.csv")
 
 
 def e_var_exp(d, trial_num, lr, c, noise, E_var_list, w_init, k_list, n):
@@ -37,8 +37,8 @@ def e_var_exp(d, trial_num, lr, c, noise, E_var_list, w_init, k_list, n):
         plot_set.box_plot_k(result, k_list, k_string, title)
 
         now = datetime.datetime.now()
-        df = pd.DataFrame(result[:, k_list], columns=k_string).describe()
-        df.to_csv(f"save_result_data/{now:%m月%d日%H:%M:%S}_noise_{noise}_trial_num_{trial_num}_D{d}_sample_num{n}.csv")
+        df = pd.DataFrame(result[:, k_list], columns=k_string)
+        df.to_csv(f"save_result_data/{now:%m月%d日%H:%M:%S}_noise_{noise}_trial_num_{trial_num}_D{d}_sample_num{n}_DC.csv")
 
 
 def d_exp(d_list, trial_num, lr, c, noise, E_var, w_init, k_list, n):
@@ -54,5 +54,5 @@ def d_exp(d_list, trial_num, lr, c, noise, E_var, w_init, k_list, n):
         plot_set.box_plot_k(result, k_list, k_string, title)
 
         now = datetime.datetime.now()
-        df = pd.DataFrame(result[:, k_list], columns=k_string).describe()
-        df.to_csv(f"save_result_data/{now:%m月%d日%H:%M:%S}_noise_{noise}_trial_num_{trial_num}_D{d}_sample_num{n}.csv")
+        df = pd.DataFrame(result[:, k_list], columns=k_string)
+        df.to_csv(f"save_result_data/{now:%m月%d日%H:%M:%S}_noise_{noise}_trial_num_{trial_num}_D{d}_sample_num{n}_DC.csv")
