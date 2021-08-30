@@ -26,4 +26,13 @@ class Noise:
             pop_mean = np.exp(self.mean + (self.sigma ** 2) / 2)
             return sample - pop_mean
 
+    def student_t(self):
+        rng = np.random.default_rng()
+        if self.n == 1:
+            sample = rng.standard_t(self.sigma, size=self.dim)
+            return sample
+        else:
+            sample = rng.standard_t(self.sigma, size=(self.dim, self.n))
+            return sample
+
 
