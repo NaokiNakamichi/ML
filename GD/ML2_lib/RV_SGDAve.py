@@ -193,14 +193,12 @@ class RVSGDSimulation(RVSGD):
         # print(valid_loss_store)
         return loss_transition
 
-    def multiple_k_transition(self,k_list,w_init):
+    def multiple_k_transition(self, k_list, w_init):
         k_transition = []
         for k in k_list:
             k_transition.append(self.transition(k=k, w_init=w_init))
 
         return k_transition
-
-
 
 
 class RVSGDRealData(RVSGD):
@@ -341,7 +339,7 @@ class RVSGDByTorch():
 
         return self.model, w_stack, b_stack
 
-    def transition(self, k, train_x, train_y, transition_x, transition_y,model):
+    def transition(self, k, train_x, train_y, transition_x, transition_y, model):
         _, w_stack, b_stack = self.learn(k, train_x, train_y, model)
         x = torch.tensor(transition_x).float()
         y = torch.LongTensor(transition_y)
@@ -353,14 +351,13 @@ class RVSGDByTorch():
         loss_transition = []
 
         sep_num = w_tmp.shape[0]
-        for update_i in range(2,w_tmp.shape[0]):
+        for update_i in range(2, w_tmp.shape[0]):
             valid_loss_store = []
             w_list = w_tmp[:update_i].mean(0)
             b_list = b_tmp[:update_i].mean(0)
             for i in range(k):
                 tmp_loss = []
                 for j in range(k):
-
                     with torch.no_grad():
                         model.fc1.weight.data = w_list[i]
                         model.fc1.bias.data = b_list[i]
@@ -386,20 +383,21 @@ class RVSGDByTorch():
 
         return loss_transition, model
 
-    def multiple_k_transition(self,k_list,train_x, train_y, transition_x, transition_y,model):
+    def multiple_k_transition(self, k_list, train_x, train_y, transition_x, transition_y, model):
         k_transition = []
         for k in k_list:
-            k_transition.append(self.transition(k=k, train_x=train_x, train_y=train_y, transition_x=transition_x, transition_y=transition_y,
-                        model=model)[0])
+            k_transition.append(self.transition(k=k, train_x=train_x, train_y=train_y, transition_x=transition_x,
+                                                transition_y=transition_y,
+                                                model=model)[0])
 
         return k_transition
 
-    def multiple_k_accuracy(self,k_list,train_x, train_y, transition_x, transition_y,model):
+    def multiple_k_accuracy(self, k_list, train_x, train_y, transition_x, transition_y, model):
         k_accuracy = []
         for k in k_list:
             m = self.transition(k=k, train_x=train_x, train_y=train_y, transition_x=transition_x,
-                                                transition_y=transition_y,
-                                                model=model)[1]
+                                transition_y=transition_y,
+                                model=model)[1]
 
             x = torch.tensor(transition_x).float()
             y = torch.LongTensor(transition_y)
@@ -411,9 +409,8 @@ class RVSGDByTorch():
         return k_accuracy
 
 
-
 class RVSGDByW():
-    def __init__(self, model_opt, c,n, lr=0.01, fixed_lr=True):
+    def __init__(self, model_opt, c, n, lr=0.01, fixed_lr=True):
         self.model_opt = model_opt
         try:
             self.model_opt.type
@@ -430,7 +427,6 @@ class RVSGDByW():
         model_store = []
         core_store = []
         valid_loss_store = []
-
 
         # nがデータセットのサンプル数、train_numはその半分
         train_num = self.n // 2
@@ -451,7 +447,7 @@ class RVSGDByW():
         # print("valid_x {}".format(valid_x[0:0 + core_num, :].shape))
         # print(self.loss_type.f(valid_y[0:0 + core_num, :], valid_x[0:0 + core_num, :], model_store[0].T).shape)
 
-        # for文を使っているので要修正
+        #  :TODO for文を使っているので要修正
         for i in range(k):
             tmp_loss = []
             for j in range(k):
@@ -470,7 +466,7 @@ class RVSGDByW():
     def transition(self, k, w_init):
         w_transition = []
         f_transition = []
-        _, core_store = self.learn(k,w_init)
+        _, core_store = self.learn(k, w_init)
 
         core_store = np.array(core_store)
 
@@ -502,6 +498,42 @@ class RVSGDByW():
 
         return w_transition, f_transition
 
+    def all_transition(self, k, w_init):
+        w_transition = []
+        f_transition = []
+        selected_index = 0
+        _, core_store = self.learn(k, w_init)
+
+        core_store = np.array(core_store)
+
+        tmp = core_store.shape
+        core_num, update_num, w_dim = tmp
+        core_store = core_store.reshape(core_num, update_num, w_dim)
+        transposed_core_store = core_store.transpose(1, 0, 2)
+        w_rv = w_init
+
+        for i_update in range(2, update_num):
+            w = np.mean(transposed_core_store[:i_update, :, :], axis=0)
+
+            valid_loss_store = []
+
+            for i in range(k):
+                tmp_loss = []
+                for j in range(k):
+                    try:
+                        tmp_loss.append(self.model_opt.f_opt(w[i].reshape(1, -1).T))
+                    except:
+                        raise ValueError("なんか入力値がおかしい気がする")
+                valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=3))
+
+            selected_index = np.argmin(valid_loss_store)
+            w_rv = w[selected_index]
+            w_transition.append(w_rv)
+            f_value = self.model_opt.f_opt(w=w_rv)
+            f_transition.append(f_value)
+
+        return core_store, selected_index, w_rv
+
     def trial_k(self, max_k, w_init):
 
         w_trial = []  # モデルを貯めていく、必要かどうか
@@ -518,12 +550,11 @@ class RVSGDByW():
 
         return np.array(w_trial), np.array(loss_store)
 
-    def many_trails(self, trial_num, max_k,w_init):
+    def many_trails(self, trial_num, max_k, w_init):
         result_w = []  # パラメータの最終結果　トライアル数*分割数k*特徴量次元
         result_loss = []  # 過剰期待損失の最終結果　トライアル数*分割数k
         for _ in tqdm(range(trial_num)):
-            w_trial, loss_store = self.trial_k(max_k=max_k,w_init=w_init)
+            w_trial, loss_store = self.trial_k(max_k=max_k, w_init=w_init)
             result_w.append(np.array(w_trial))
             result_loss.append(np.array(loss_store))
         return np.array(result_w), np.array(result_loss)
-

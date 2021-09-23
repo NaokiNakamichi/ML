@@ -7,14 +7,14 @@ class Iterative:
         self.w = np.array(w_init)
         self.t_max = t_max
         self.t = 0
-        self.wstore = [self.w]
+        self.wstore = []
 
     def __iter__(self):
         return self
 
     def __next__(self):
         self.t += 1
-        if self.t > self.t_max:
+        if self.t > self.t_max+1:
             raise StopIteration
         else:
             self.wstore.append(self.w)
