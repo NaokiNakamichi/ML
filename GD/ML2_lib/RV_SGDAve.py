@@ -485,7 +485,7 @@ class RVSGDByW():
                 tmp_loss = []
                 for j in range(k):
                     try:
-                        tmp_loss.append(self.model_opt.f_opt(w[i].reshape(1, -1).T))
+                        tmp_loss.append(self.model_opt.f_opt(w[j].reshape(1, -1).T))
                     except:
                         raise ValueError("なんか入力値がおかしい気がする")
                 valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=3))
@@ -524,7 +524,8 @@ class RVSGDByW():
                         tmp_loss.append(self.model_opt.f_opt(w[i].reshape(1, -1).T))
                     except:
                         raise ValueError("なんか入力値がおかしい気がする")
-                valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=3))
+                valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=k))
+
 
             selected_index = np.argmin(valid_loss_store)
             w_rv = w[selected_index]
@@ -532,7 +533,23 @@ class RVSGDByW():
             f_value = self.model_opt.f_opt(w=w_rv)
             f_transition.append(f_value)
 
+        print(f"valid_loss_store {valid_loss_store}")
+        print(f"tmp_loss {tmp_loss}")
+        print(selected_index)
+
         return core_store, selected_index, w_rv
+
+    def k_all_transition(self, k_list, w_init):
+
+        k_core_list, k_selected_index, k_w_rv = [], [], []
+
+        for k in k_list:
+            core_store, selected_index, w_rv = self.all_transition(k, w_init)
+            k_core_list.append(core_store)
+            k_selected_index.append(selected_index)
+            k_w_rv.append(w_rv)
+
+        return k_core_list, k_selected_index, k_w_rv
 
     def trial_k(self, max_k, w_init):
 

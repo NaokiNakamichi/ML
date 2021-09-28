@@ -43,7 +43,7 @@ class SGD(Iterative):
                     self.w = self.w - self.a * grad
         else:
             grad = model.g_opt(w=self.w)
-            if 1000000000 < np.sum(grad ** 2):
+            if 100000000 < np.sum(grad ** 2):
                 grad *= 0.001
             if self.fixed_lr:
                 self.w = self.w - self.a * grad
