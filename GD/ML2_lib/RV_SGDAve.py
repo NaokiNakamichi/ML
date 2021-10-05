@@ -493,6 +493,7 @@ class RVSGDByW():
             index = np.argmin(valid_loss_store)
             w_rv = w[index]
             w_transition.append(w_rv)
+            self.model_opt.remove_f_noise()
             f_value = self.model_opt.f_opt(w=w_rv)
             f_transition.append(f_value)
 
