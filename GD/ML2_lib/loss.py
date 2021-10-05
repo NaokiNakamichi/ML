@@ -90,3 +90,6 @@ class RosenBrock:
 
         return E
 
+    def remove_f_noise(self):
+        self.noise_type_f = None
+
