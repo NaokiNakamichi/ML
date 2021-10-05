@@ -11,12 +11,12 @@ import datetime
 if __name__ == "__main__":
     args = sys.argv
     d = 2
-    trial_num = 2
+    trial_num = 100
     lr = 0.001
 
     c = 1
 
-    n = 100
+    n = 10000
     k_list = [0, 1, 3, 4, 9, 19]
 
     noise = "lognormal"
