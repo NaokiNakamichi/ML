@@ -1,5 +1,3 @@
-# coding:utf-8
-
 import numpy as np
 
 import pandas as pd
@@ -13,4 +11,4 @@ if __name__ == "__main__":
 
     now = datetime.datetime.now()
     df = pd.DataFrame(np.array([4, 5, 6]), columns=[1, 2, 3])
-    df.to_csv(f"remote_save_result/{now:%m月%d日%H:%M:%S}test.csv", index=False)
+    df.to_csv("remote_save_result/test.csv", index=False)
