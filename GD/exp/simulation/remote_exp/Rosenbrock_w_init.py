@@ -1,3 +1,7 @@
+import os, sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..."))
+
 import numpy as np
 
 from ML2_lib import loss
@@ -8,9 +12,7 @@ from ML2_lib import RV_SGDAve
 import pandas as pd
 import datetime
 
-import os, sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 if __name__ == "__main__":
     args = sys.argv
