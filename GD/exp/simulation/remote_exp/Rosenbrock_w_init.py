@@ -39,7 +39,6 @@ if __name__ == "__main__":
         RV = RV_SGDAve.RVSGDByW(model_opt=son, c=c, n=n, lr=lr)
         _, result = RV.many_trails(trial_num=trial_num, max_k=k_list[-1] + 1, w_init=w_init)
         title = f"RVSGD Rosenbrock trial = {trial_num} noise = {noise} D = {d}_sample_num{n} noise var = {E_var}　w_init = {w_init}"
-        plot_set.box_plot_k(result, k_list, k_string, title)
 
         now = datetime.datetime.now()
         df = pd.DataFrame(result[:, k_list], columns=k_string)
