@@ -1,7 +1,5 @@
 import os, sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
 import numpy as np
 
 from ML2_lib import loss
