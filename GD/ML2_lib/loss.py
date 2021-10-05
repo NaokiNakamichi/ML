@@ -38,12 +38,14 @@ class LinearQuadraticLoss():
 
 
 class RosenBrock:
-    def __init__(self, d, noise_type=None, E_var=1.75):
+    def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None,f_E_var=1.75):
         self.type = "loss_with_w"
         self.d = d
         self.w_star = np.ones(d)
         self.noise_type = noise_type
         self.E_var = E_var
+        self.noise_type_f = noise_type_f
+        self.f_E_var = f_E_var
 
     def f_opt(self, w):
         w = np.array(w)
@@ -53,6 +55,9 @@ class RosenBrock:
             tmp_1 = 100 * (w[i + 1] - w[i] ** 2) ** 2
             tmp_2 = (w[i] - 1) ** 2
             tmp += tmp_1 + tmp_2
+
+        if self.noise_type_f:
+            tmp += self.generate_noise_f()
 
         return tmp
 
@@ -78,3 +83,10 @@ class RosenBrock:
         E = getattr(tmp, self.noise_type)()
 
         return E
+
+    def generate_noise_f(self):
+        tmp = additive_noise.Noise(dim=1, mean=0, sigma=self.f_E_var, n=1)
+        E = getattr(tmp, self.noise_type)()
+
+        return E
+

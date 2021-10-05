@@ -58,11 +58,11 @@ def d_exp(d_list, trial_num, lr, c, noise, E_var, w_init, k_list, n):
         df = pd.DataFrame(result[:, k_list], columns=k_string)
         df.to_csv(f"save_result_data/{now:%m月%d日%H:%M:%S}_noise_{noise}_trial_num_{trial_num}_D{d}_sample_num{n}_RV.csv")
 
-def w_init_exp(d, trial_num, lr, c, noise, E_var, w_init_list, k_list, n):
+def w_init_exp(d, trial_num, lr, c, noise, E_var, w_init_list, k_list, n,f_E_var=1.75,noise_type_f=None):
     k_string = [f"{i + 1}" for i in k_list]
 
     for w_init in w_init_list:
-        son = loss.RosenBrock(d=d, noise_type=noise, E_var=E_var)
+        son = loss.RosenBrock(d=d, noise_type=noise, E_var=E_var,f_E_var=f_E_var,noise_type_f=noise_type_f)
         RV = RV_SGDAve.RVSGDByW(model_opt=son, c=c, n=n, lr=lr)
         _, result = RV.many_trails(trial_num=trial_num, max_k=k_list[-1] + 1, w_init=w_init)
         title = f"RVSGD Rosenbrock trial = {trial_num} noise = {noise} D = {d}_sample_num{n} noise var = {E_var}　w_init = {w_init}"
@@ -71,4 +71,4 @@ def w_init_exp(d, trial_num, lr, c, noise, E_var, w_init_list, k_list, n):
         now = datetime.datetime.now()
         df = pd.DataFrame(result[:, k_list], columns=k_string)
         df.to_csv(
-            f"save_result_data/{now:%m月%d日%H:%M:%S}_noise_{noise}_trial_num_{trial_num}_D{d}_sample_num{n}_RV_w_init_{w_init[1]}.csv",index=False)
+            f"remote_save_result/{now:%m月%d日%H:%M:%S}_noise_{noise}_trial_num_{trial_num}_D{d}_sample_num{n}_RV_w_init_{w_init[1]}.csv",index=False)
