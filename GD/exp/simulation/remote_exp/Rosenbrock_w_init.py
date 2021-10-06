@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     now = datetime.datetime.now()
 
-    new_dir_path_recursive = f"remote_save_result/w_init_Rosenbrock_lognormal{now:%m月%d日%H:%M:%S}"
+    new_dir_path_recursive = f"remote_save_result/w_init_Rosenbrock_lognormal{now:%m:%d:%H:%M:%S}"
     os.makedirs(new_dir_path_recursive)
 
     for w_init in w_init_list:
