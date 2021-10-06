@@ -38,5 +38,5 @@ if __name__ == "__main__":
         title = f"RVSGD Rosenbrock trial = {trial_num} noise = {noise} D = {d}_sample_num{n} noise var = {E_var}　w_init = {w_init}"
         df = pd.DataFrame(result[:, k_list, 0], columns=k_string)
         df.to_csv(
-            f"{new_dir_path_recursive}/_noise_{noise}_trial_num_{trial_num}_D{d}_sample_num{n}_RV_w_init_{w_init}.csv",
+            f"{new_dir_path_recursive}/noise_{noise}_trial_num_{trial_num}_D{d}_sample_num{n}_RV_w_init_{w_init}.csv",
             index=False)
