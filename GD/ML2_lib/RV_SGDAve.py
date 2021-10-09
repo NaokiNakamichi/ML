@@ -1,5 +1,17 @@
 import numpy as np
-from tqdm.notebook import tqdm
+
+def is_env_notebook():
+    """Determine wheather is the environment Jupyter Notebook"""
+    if 'get_ipython' not in globals():
+        # Python shell
+        return False
+
+    # Jupyter Notebook
+    return True
+
+from tqdm.notebook import tqdm as tqdm_notebook
+from tqdm import tqdm
+
 
 from . import algo_sgd
 from . import additive_noise
@@ -571,8 +583,15 @@ class RVSGDByW():
     def many_trails(self, trial_num, max_k, w_init):
         result_w = []  # パラメータの最終結果　トライアル数*分割数k*特徴量次元
         result_loss = []  # 過剰期待損失の最終結果　トライアル数*分割数k
-        for _ in tqdm(range(trial_num)):
+
+        if is_env_notebook():
+            for _ in tqdm_notebook(range(trial_num)):
+                w_trial, loss_store = self.trial_k(max_k=max_k, w_init=w_init)
+                result_w.append(np.array(w_trial))
+                result_loss.append(np.array(loss_store))
+        else:
             w_trial, loss_store = self.trial_k(max_k=max_k, w_init=w_init)
             result_w.append(np.array(w_trial))
             result_loss.append(np.array(loss_store))
+
         return np.array(result_w), np.array(result_loss)
