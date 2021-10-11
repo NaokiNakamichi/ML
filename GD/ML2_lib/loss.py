@@ -57,7 +57,7 @@ class RosenBrock:
             tmp += tmp_1 + tmp_2
 
         if self.noise_type_f:
-            tmp += self.generate_noise_f()
+            tmp += self.generate_noise_f()[0]
 
         return tmp
 

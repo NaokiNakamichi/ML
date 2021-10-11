@@ -575,6 +575,8 @@ class RVSGDByW():
             w, _ = self.learn(k=k, w_init=w_init)
             w_trial.append(w)
 
+            self.model_opt.remove_f_noise()
+
             f_value = self.model_opt.f_opt(w.T)
             loss_store.append(f_value)
 
@@ -590,8 +592,9 @@ class RVSGDByW():
                 result_w.append(np.array(w_trial))
                 result_loss.append(np.array(loss_store))
         else:
-            w_trial, loss_store = self.trial_k(max_k=max_k, w_init=w_init)
-            result_w.append(np.array(w_trial))
-            result_loss.append(np.array(loss_store))
+            for _ in range(trial_num):
+                w_trial, loss_store = self.trial_k(max_k=max_k, w_init=w_init)
+                result_w.append(np.array(w_trial))
+                result_loss.append(np.array(loss_store))
 
         return np.array(result_w), np.array(result_loss)
