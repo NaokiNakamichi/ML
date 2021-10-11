@@ -524,6 +524,8 @@ class RVSGDByW():
         core_store = core_store.reshape(core_num, update_num, w_dim)
         transposed_core_store = core_store.transpose(1, 0, 2)
         w_rv = w_init
+        valid_loss_store = []
+        tmp_loss = []
 
         for i_update in range(2, update_num):
             w = np.mean(transposed_core_store[:i_update, :, :], axis=0)
