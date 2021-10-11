@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     now = datetime.datetime.now()
 
-    new_dir_path_recursive = f"remote_save_result/Rosenbrock_2d_total{now:%m:%d:%H:%M:%S}"
+    new_dir_path_recursive = f"remote_save_result/Rosenbrock_2d_trajectory{now:%m:%d:%H:%M:%S}"
     os.makedirs(new_dir_path_recursive)
 
     for noise_type in tqdm(noise_type_list):
