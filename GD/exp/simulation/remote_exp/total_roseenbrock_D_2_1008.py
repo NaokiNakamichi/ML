@@ -12,12 +12,12 @@ from tqdm import tqdm
 if __name__ == "__main__":
     args = sys.argv
     d = 2
-    trial_num = 3
+    trial_num = 100
     lr = 0.001
 
     c = 1
 
-    n = 100
+    n = 10000
     k_list = [0, 1, 3, 4, 9, 19]
     # ノイズの種類（勾配）
     noise_type_list = ["lognormal", "normal", "student_t"]
