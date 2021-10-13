@@ -47,14 +47,14 @@ if __name__ == "__main__":
     # 検証時に加える関数値にノイズの種類
     noise_type_f_list = ["lognormal","normal"]
     # 初期値
-    w_init_list_0 = [3, 5]
-    w_init_list_1 = [3, 5]
+    w_init_list_0 = [2]
+    w_init_list_1 = [2]
 
     k_string = [f"{i + 1}" for i in k_list]
 
     now = datetime.datetime.now()
 
-    new_dir_path_recursive = f"remote_save_result/Rosenbrock_2d_total{now:%m:%d:%H:%M:%S}"
+    new_dir_path_recursive = f"remote_save_result/Rosenbrock_f_noise{now:%m:%d:%H:%M:%S}"
     os.makedirs(new_dir_path_recursive)
 
     for w_init_0 in w_init_list_0:
