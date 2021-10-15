@@ -20,7 +20,7 @@ if __name__ == "__main__":
     n = 10000
     k_list = [0, 1, 3, 4, 9, 19]
     # ノイズの種類（勾配）
-    noise_type_list = ["lognormal", "normal", "student_t"]
+    noise_type_list = ["lognormal"]
 
     E_var = 1.75
     # ノイズの分散（勾配）
@@ -40,8 +40,8 @@ if __name__ == "__main__":
     f_E_var = 1.75
 
     # 初期値
-    w_init_list_0 = [-10, 0, 10]
-    w_init_list_1 = [-10, 0, 10]
+    w_init_list_0 = [-2, 0, 2]
+    w_init_list_1 = [-2, 0, 2]
 
     k_string = [f"{i + 1}" for i in k_list]
 

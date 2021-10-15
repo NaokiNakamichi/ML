@@ -171,11 +171,21 @@ def box_plot_k(result, k_list, k_string, title):
         "size": 20,
     }
 
+
+
     columns = k_string
     fig = plt.figure(figsize=(10.0, 8.0))
     ax1 = fig.add_subplot(111)
 
-    ax1.boxplot(result[:, k_list])
+    if len(result.shape) == 2:
+        if result.shape[1] == len(k_list):
+
+            ax1.boxplot(result)
+        else:
+            ax1.boxplot(result[:, k_list])
+    else:
+        raise ValueError("変数resultの形を確認してください")
+
     ax1.set_xticklabels(columns, fontsize=20)
     ax1.set_title(f'{title}', fontsize=10)
     ax1.set_xlabel('k', fontdict=fdic)
@@ -183,7 +193,7 @@ def box_plot_k(result, k_list, k_string, title):
     plt.show()
 
 
-def transition(result, title, k_list, xlim=None, ylim=None):
+def transition(result, title, k_list_string, xlim=None, ylim=None):
     fig = plt.figure(figsize=(10.0, 8.0))
     ax1 = fig.add_subplot(111)
     ax1.set_title(title)
@@ -194,5 +204,5 @@ def transition(result, title, k_list, xlim=None, ylim=None):
         ax1.set_xlim(*xlim)
     if ylim is not None:
         ax1.set_ylim(*ylim)
-    ax1.legend(labels=[f'k = {k}' for k in k_list])
+    ax1.legend(labels=[f'k = {k}' for k in k_list_string])
     plt.show()
