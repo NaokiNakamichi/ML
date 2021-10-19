@@ -38,7 +38,7 @@ class LinearQuadraticLoss():
 
 
 class RosenBrock:
-    def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None,f_E_var=1.75):
+    def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None, f_E_var=1.75):
         self.type = "loss_with_w"
         self.d = d
         self.w_star = np.ones(d)
@@ -95,30 +95,41 @@ class RosenBrock:
 
 
 class Ackley:
-    def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None,f_E_var=1.75):
+    def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None, f_E_var=1.75):
         self.type = "loss_with_w"
         self.d = d
-        self.w_star = np.ones(d)
+        self.w_star = np.zeros(d)
         self.noise_type = noise_type
         self.E_var = E_var
         self.noise_type_f = noise_type_f
         self.f_E_var = f_E_var
 
     def f_opt(self, w):
-        Z = -20 * np.exp(-0.2 * np.sqrt(0.5 * (X ** 2 + Y ** 2))) - np.exp(
-            0.5 * (np.cos(2 * np.pi * X) + np.cos(2 * np.pi * Y))) + np.e + 20
+        f = 0
+        if self.d == 2:
+            tmp = np.sqrt(0.5 * (w[0] ** 2 + w[1] ** 2))
+            tmp2 = np.cos(2 * np.pi * w[0]) + np.cos(2 * np.pi * w[1])
+            f = 20 - 20 * np.exp(-0.2 * tmp) - np.exp(0.5 * tmp2) + np.e
 
-        w = np.array(w)
+        if self.noise_type_f:
+            f += self.generate_noise_f()[0]
 
-
-        return Z
+        return f
 
     def g_opt(self, w):
-        w = np.array(w)
-        self.w_star = np.ones(self.d)
+        g = 0
+        if self.d == 2:
+            tmp = np.sqrt(0.5 * (w[0] ** 2 + w[1] ** 2))
+            if tmp == 0:
+                return np.array([0,0])
+            tmp2 = np.cos(2 * np.pi * w[0]) + np.cos(2 * np.pi * w[1])
+            g = (- 20 * 0.2 * np.exp(- 0.2 * tmp) / tmp) * w + (2 * np.pi * np.sin(np.pi * w) * (- np.exp(0.5 * tmp2)))
+
+        if self.noise_type:
+            g = g + self.generate_noise()
 
 
-        return
+        return g
 
     def generate_noise(self):
         tmp = additive_noise.Noise(dim=self.d, mean=0, sigma=self.E_var, n=1)
