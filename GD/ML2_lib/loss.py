@@ -3,6 +3,32 @@ import numpy as np
 from . import additive_noise
 
 
+class LossInit():
+    def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None, f_E_var=1.75):
+        self.type = "loss_with_w"
+        self.d = d
+        self.w_star = np.ones(d)
+        self.noise_type = noise_type
+        self.E_var = E_var
+        self.noise_type_f = noise_type_f
+        self.f_E_var = f_E_var
+
+    def generate_noise(self):
+        tmp = additive_noise.Noise(dim=self.d, mean=0, sigma=self.E_var, n=1)
+        E = getattr(tmp, self.noise_type)()
+
+        return E
+
+    def generate_noise_f(self):
+        tmp = additive_noise.Noise(dim=1, mean=0, sigma=self.f_E_var, n=1)
+        E = getattr(tmp, self.noise_type)()
+
+        return E
+
+    def remove_f_noise(self):
+        self.noise_type_f = None
+
+
 class LinearQuadraticLoss():
     def __init__(self):
         self.type = "loss_with_data"
@@ -37,15 +63,10 @@ class LinearQuadraticLoss():
         return excess_risk[0][0]
 
 
-class RosenBrock:
+class RosenBrock(LossInit):
     def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None, f_E_var=1.75):
-        self.type = "loss_with_w"
-        self.d = d
-        self.w_star = np.ones(d)
-        self.noise_type = noise_type
-        self.E_var = E_var
-        self.noise_type_f = noise_type_f
-        self.f_E_var = f_E_var
+        super(RosenBrock, self).__init__(d=d, noise_type=noise_type, E_var=E_var, noise_type_f=noise_type_f,
+                                         f_E_var=f_E_var)
 
     def f_opt(self, w):
         w = np.array(w)
@@ -121,13 +142,12 @@ class Ackley:
         if self.d == 2:
             tmp = np.sqrt(0.5 * (w[0] ** 2 + w[1] ** 2))
             if tmp == 0:
-                return np.array([0,0])
+                return np.array([0, 0])
             tmp2 = np.cos(2 * np.pi * w[0]) + np.cos(2 * np.pi * w[1])
             g = (- 20 * 0.2 * np.exp(- 0.2 * tmp) / tmp) * w + (2 * np.pi * np.sin(np.pi * w) * (- np.exp(0.5 * tmp2)))
 
         if self.noise_type:
             g = g + self.generate_noise()
-
 
         return g
 
@@ -145,3 +165,30 @@ class Ackley:
 
     def remove_f_noise(self):
         self.noise_type_f = None
+
+
+class Bohachevsky:
+
+    def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None, f_E_var=1.75):
+        self.type = "loss_with_w"
+        self.d = d
+        self.w_star = np.zeros(d)
+        self.noise_type = noise_type
+        self.E_var = E_var
+        self.noise_type_f = noise_type_f
+        self.f_E_var = f_E_var
+
+    def f_opt(self, w):
+        w = np.array(w)
+        w1, w2 = w[0], w[1]
+        f = w1 ** 2 + 2 * w2 ** 2 - 0.3 * np.cos(3 * np.pi * w1) - 0.4 * np.cos(4 * np.pi * w2) + 0.7
+        return f
+
+    def g_opt(self, w):
+        w = np.array(w)
+        w1, w2 = w[0], w[1]
+        g_w1 = 2 * w1 + 0.9 * np.pi * np.sin(3 * np.pi * w1)
+        g_w2 = 4 * w2 + 1.6 * np.pi * np.sin(4 * np.pi * w2)
+        g = np.array([g_w1, g_w2])
+        g = g + self.noise_value
+        return g
