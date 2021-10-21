@@ -12,7 +12,7 @@ from tqdm import tqdm
 if __name__ == "__main__":
     args = sys.argv
     d = 2
-    trial_num = 100
+    trial_num = 1
     lr = 0.1
 
     c = 1
@@ -40,8 +40,8 @@ if __name__ == "__main__":
     f_E_var = 1.75
 
     # 初期値
-    w_init_list_0 = [-5, 0, 5]
-    w_init_list_1 = [-5, 0, 5]
+    w_init_list_0 = [-5, 1, 5]
+    w_init_list_1 = [-5, 1, 5]
 
     k_string = [f"{i + 1}" for i in k_list]
 
