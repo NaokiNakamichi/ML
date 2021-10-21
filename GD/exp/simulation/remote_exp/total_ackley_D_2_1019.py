@@ -20,7 +20,7 @@ if __name__ == "__main__":
     n = 10000
     k_list = [0, 1, 3, 4, 9, 19]
     # ノイズの種類（勾配）
-    noise_type_list = ["lognormal"]
+    noise_type_list = ["lognormal", "normal", "student_t"]
 
     E_var = 1.75
     # ノイズの分散（勾配）
