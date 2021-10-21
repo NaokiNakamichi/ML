@@ -12,7 +12,7 @@ from tqdm import tqdm
 if __name__ == "__main__":
     args = sys.argv
     d = 2
-    trial_num = 1
+    trial_num = 100
     lr = 0.1
 
     c = 1
