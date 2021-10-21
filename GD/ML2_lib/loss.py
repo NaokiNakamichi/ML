@@ -141,10 +141,14 @@ class Ackley:
         g = 0
         if self.d == 2:
             tmp = np.sqrt(0.5 * (w[0] ** 2 + w[1] ** 2))
-            if tmp == 0:
-                return np.array([0, 0])
+            if type(w) is not int:
+                pass
+
+            else:
+                if tmp == 0:
+                    return np.array([0, 0])
             tmp2 = np.cos(2 * np.pi * w[0]) + np.cos(2 * np.pi * w[1])
-            g = (- 20 * 0.2 * np.exp(- 0.2 * tmp) / tmp) * w + (2 * np.pi * np.sin(np.pi * w) * (- np.exp(0.5 * tmp2)))
+            g = (20 * 0.2 * np.exp(- 0.2 * tmp) / tmp) * w + (2 * np.pi * np.sin(np.pi * w) * (np.exp(0.5 * tmp2)))
 
         if self.noise_type:
             g = g + self.generate_noise()
