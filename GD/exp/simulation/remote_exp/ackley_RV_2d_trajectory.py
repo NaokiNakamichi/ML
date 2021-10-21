@@ -15,7 +15,7 @@ if __name__ == "__main__":
     c = 1
 
     n = 10000
-    k_list = [0, 1, 3, 4, 9, 19]
+    k_list = [1, 2, 4, 5, 10, 20]
     # ノイズの種類（勾配）
     noise_type_list = ["lognormal", "normal", "student_t"]
 
