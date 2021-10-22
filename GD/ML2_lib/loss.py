@@ -68,6 +68,14 @@ class RosenBrock(LossInit):
         super(RosenBrock, self).__init__(d=d, noise_type=noise_type, E_var=E_var, noise_type_f=noise_type_f,
                                          f_E_var=f_E_var)
 
+        self.type = "loss_with_w"
+        self.d = d
+        self.w_star = np.ones(d)
+        self.noise_type = noise_type
+        self.E_var = E_var
+        self.noise_type_f = noise_type_f
+        self.f_E_var = f_E_var
+
     def f_opt(self, w):
         w = np.array(w)
         tmp = 0
@@ -104,6 +112,14 @@ class Ackley(LossInit):
     def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None, f_E_var=1.75):
         super(Ackley, self).__init__(d=d, noise_type=noise_type, E_var=E_var, noise_type_f=noise_type_f,
                                      f_E_var=f_E_var)
+
+        self.type = "loss_with_w"
+        self.d = d
+        self.w_star = np.zeros(d)
+        self.noise_type = noise_type
+        self.E_var = E_var
+        self.noise_type_f = noise_type_f
+        self.f_E_var = f_E_var
 
     def f_opt(self, w):
         f = 0

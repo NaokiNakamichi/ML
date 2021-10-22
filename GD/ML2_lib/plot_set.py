@@ -72,7 +72,8 @@ def w_value_2d_heatmap(f, w_store, _t_max, title="w value"):
     plt.show()
 
 
-def w_value_2d_k_candidates_contour(f, core_store, _t_max, selected_index, title="w value", trajectory=True):
+def w_value_2d_k_candidates_contour(f, core_store, _t_max, selected_index, title="w value", levels=None,
+                                    trajectory=True):
     w_star = f.w_star
     grid_x_max, grid_y_max = np.amax(core_store, axis=(0, 1)) + 1
     grid_x_min, grid_y_min = np.amin(core_store, axis=(0, 1)) - 1
@@ -82,9 +83,11 @@ def w_value_2d_k_candidates_contour(f, core_store, _t_max, selected_index, title
     Z = f.f_opt([X, Y])
 
     fig, axes = plt.subplots(1, 1, figsize=(6, 6))
+    if not levels:
+        levels = [0, 1, 10, 100, 400]
     # axes.pcolor(X, Y, Z, cmap=plt.cm.rainbow,shading='auto')
     ctrx = axes.contour(X, Y, Z,
-                        levels=[0, 1, 10, 100, 400],  # 等高線の間隔
+                        levels=levels,  # 等高線の間隔
                         linewidths=1,  # 等高線の幅
                         colors="black"
                         )
@@ -119,7 +122,7 @@ def w_value_2d_k_candidates_contour(f, core_store, _t_max, selected_index, title
 
 def multiple_w_value_2d_k_candidates_contour(f, k_list, k_list_core_store, _t_max, k_selected_index,
                                              title="w trajectory",
-                                             trajectory=True):
+                                             trajectory=True,levels=None):
     fig, axes = plt.subplots(len(k_list_core_store), 1, figsize=(6, 36))
     for i, core_store in enumerate(k_list_core_store):
         w_star = f.w_star
@@ -133,8 +136,10 @@ def multiple_w_value_2d_k_candidates_contour(f, k_list, k_list_core_store, _t_ma
         Z = f.f_opt([X, Y])
 
         # axes[i].pcolor(X, Y, Z, cmap=plt.cm.rainbow,shading='auto')
+        if not levels:
+            levels = [0, 1, 10, 100, 400, 1000, 10000, 100000, 1000000]
         ctrx = axes[i].contour(X, Y, Z,
-                               levels=[0, 1, 10, 100, 400, 1000, 10000, 100000, 1000000],  # 等高線の間隔
+                               levels=levels,  # 等高線の間隔
                                linewidths=1,  # 等高線の幅
                                colors="black"
                                )
@@ -170,8 +175,6 @@ def box_plot_k(result, k_list, k_string, title):
     fdic = {
         "size": 20,
     }
-
-
 
     columns = k_string
     fig = plt.figure(figsize=(10.0, 8.0))
