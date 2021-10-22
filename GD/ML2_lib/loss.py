@@ -103,7 +103,7 @@ class RosenBrock(LossInit):
 class Ackley(LossInit):
     def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None, f_E_var=1.75):
         super(Ackley, self).__init__(d=d, noise_type=noise_type, E_var=E_var, noise_type_f=noise_type_f,
-                                          f_E_var=f_E_var)
+                                     f_E_var=f_E_var)
 
     def f_opt(self, w):
         f = 0
@@ -175,3 +175,62 @@ class Bohachevsky(LossInit):
 
         else:
             raise ValueError("次元数は２以外あり得ない")
+
+
+class RotatedHyperEllipsoid(LossInit):
+    def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None, f_E_var=1.75):
+        super(RotatedHyperEllipsoid, self).__init__(d=d, noise_type=noise_type, E_var=E_var, noise_type_f=noise_type_f,
+                                                    f_E_var=f_E_var)
+
+        self.type = "loss_with_w"
+        self.d = d
+        self.w_star = np.zeros(d)
+        self.noise_type = noise_type
+        self.E_var = E_var
+        self.noise_type_f = noise_type_f
+        self.f_E_var = f_E_var
+
+    def f_opt(self, w):
+        w = np.array(w)
+        tmp1 = np.arange(self.d, 0, -1)
+        tmp2 = w ** 2
+        f = np.sum(tmp1 * tmp2)
+
+        if self.noise_type_f:
+            f += self.generate_noise_f()[0]
+        return f
+
+    def g_opt(self, w):
+        w = np.array(w)
+        tmp1 = np.arange(self.d, 0, -1)
+        g = 2 * tmp1 * w
+        if self.noise_type:
+            g = g + self.generate_noise()
+        return g
+
+
+class Ellipsoid(LossInit):
+    def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None, f_E_var=1.75):
+        super(Ellipsoid, self).__init__(d=d, noise_type=noise_type, E_var=E_var, noise_type_f=noise_type_f,
+                                        f_E_var=f_E_var)
+
+    def f_opt(self, w):
+        f = 0
+        if self.d == 2:
+            for i in range(self.d):
+                f += (1000 ** ((i - 1) / (self.d - 1)) * w[i]) ** 2
+
+        if self.noise_type_f:
+            f += self.generate_noise_f()[0]
+
+        return f
+
+    def g_opt(self, w):
+        g = 0
+        if self.d == 2:
+            g = 2 * np.array([w[0], 1000 * w[1]])
+
+        if self.noise_type:
+            g = g + self.generate_noise()
+
+        return g
