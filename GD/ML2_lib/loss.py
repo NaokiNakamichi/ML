@@ -69,6 +69,7 @@ class RosenBrock(LossInit):
                                          f_E_var=f_E_var)
 
         self.type = "loss_with_w"
+        self.name = "Rosenbrock"
         self.d = d
         self.w_star = np.ones(d)
         self.noise_type = noise_type
@@ -115,6 +116,7 @@ class Ackley(LossInit):
 
         self.type = "loss_with_w"
         self.d = d
+        self.name = "Ackley"
         self.w_star = np.zeros(d)
         self.noise_type = noise_type
         self.E_var = E_var
@@ -158,6 +160,7 @@ class Bohachevsky(LossInit):
                                           f_E_var=f_E_var)
 
         self.type = "loss_with_w"
+        self.name = "Bohachevsky"
         self.d = d
         self.w_star = np.zeros(d)
         self.noise_type = noise_type
@@ -199,6 +202,7 @@ class RotatedHyperEllipsoid(LossInit):
                                                     f_E_var=f_E_var)
 
         self.type = "loss_with_w"
+        self.name = "RotatedHyperEllipsoid"
         self.d = d
         self.w_star = np.zeros(d)
         self.noise_type = noise_type
@@ -229,6 +233,8 @@ class Ellipsoid(LossInit):
     def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None, f_E_var=1.75):
         super(Ellipsoid, self).__init__(d=d, noise_type=noise_type, E_var=E_var, noise_type_f=noise_type_f,
                                         f_E_var=f_E_var)
+
+        self.name = "Ellipsoid"
 
     def f_opt(self, w):
         f = 0

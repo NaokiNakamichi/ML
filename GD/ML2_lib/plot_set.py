@@ -1,4 +1,6 @@
 import numpy as np
+import os
+import datetime
 
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
@@ -122,56 +124,108 @@ def w_value_2d_k_candidates_contour(f, core_store, _t_max, selected_index, title
 
 def multiple_w_value_2d_k_candidates_contour(f, k_list, k_list_core_store, _t_max, k_selected_index,
                                              title="w trajectory",
-                                             trajectory=True,levels=None):
-    fig, axes = plt.subplots(len(k_list_core_store), 1, figsize=(6, 36))
-    for i, core_store in enumerate(k_list_core_store):
-        w_star = f.w_star
-        grid_x_max, grid_y_max = np.amax(core_store, axis=(0, 1))
-        grid_x_min, grid_y_min = np.amin(core_store, axis=(0, 1))
-        grid_x_max, grid_y_max = max(grid_x_max, w_star[0]) + 1, max(grid_y_max, w_star[1]) + 1
-        grid_x_min, grid_y_min = min(grid_x_min, w_star[1]) - 1, min(grid_y_min, w_star[1]) - 1
-        xvals = np.arange(grid_x_min, grid_x_max, ((grid_x_max - grid_x_min) / 500))
-        yvals = np.arange(grid_y_min, grid_y_max, ((grid_y_max - grid_y_min) / 500))
-        X, Y = np.meshgrid(xvals, yvals)
-        Z = f.f_opt([X, Y])
-
-        # axes[i].pcolor(X, Y, Z, cmap=plt.cm.rainbow,shading='auto')
-        if not levels:
-            levels = [0, 1, 10, 100, 400, 1000, 10000, 100000, 1000000]
-        ctrx = axes[i].contour(X, Y, Z,
+                                             trajectory=True, levels=None, saving_png=False):
+    if saving_png:
+        now = datetime.datetime.now()
+        new_dir_path_recursive = f"save_result_data/{f.name}_2d_trajectory_image_{now:%m:%d:%H:%M:%S}"
+        os.makedirs(new_dir_path_recursive)
+        for i, core_store in enumerate(k_list_core_store):
+            plt.figure(figsize=(6, 6))
+            w_star = f.w_star
+            grid_x_max, grid_y_max = np.amax(core_store, axis=(0, 1))
+            grid_x_min, grid_y_min = np.amin(core_store, axis=(0, 1))
+            grid_x_max, grid_y_max = max(grid_x_max, w_star[0]) + 1, max(grid_y_max, w_star[1]) + 1
+            grid_x_min, grid_y_min = min(grid_x_min, w_star[1]) - 1, min(grid_y_min, w_star[1]) - 1
+            xvals = np.arange(grid_x_min, grid_x_max, ((grid_x_max - grid_x_min) / 500))
+            yvals = np.arange(grid_y_min, grid_y_max, ((grid_y_max - grid_y_min) / 500))
+            X, Y = np.meshgrid(xvals, yvals)
+            Z = f.f_opt([X, Y])
+            if not levels:
+                levels = [0, 1, 10, 100, 400, 1000, 10000, 100000, 1000000]
+            ctrx = plt.contour(X, Y, Z,
                                levels=levels,  # 等高線の間隔
                                linewidths=1,  # 等高線の幅
                                colors="black"
                                )
-        axes[i].clabel(ctrx)
-        cmap = plt.get_cmap("tab10")
-        # wの軌跡
-        if trajectory:
-            for k, w_store in enumerate(core_store):
-                axes[i].plot(w_store.T[0], w_store.T[1], alpha=0.3, linewidth=3, color=cmap(k))
-                pos = (np.array(w_store[:-1]) + np.array(w_store[1:])) / 2
-                dire = np.array(w_store[:-1]) - np.array(w_store[1:])
+            plt.clabel(ctrx)
+            cmap = plt.get_cmap("tab10")
+            # wの軌跡
+            if trajectory:
+                for k, w_store in enumerate(core_store):
+                    plt.plot(w_store.T[0], w_store.T[1], alpha=0.3, linewidth=3, color=cmap(k))
+                    pos = (np.array(w_store[:-1]) + np.array(w_store[1:])) / 2
+                    dire = np.array(w_store[:-1]) - np.array(w_store[1:])
 
-                long = np.quantile((dire ** 2).sum(axis=1), 0.995)
+                    long = np.quantile((dire ** 2).sum(axis=1), 0.995)
 
-                for i_annotate, (i_pos, i_dir) in enumerate(zip(pos, dire)):
-                    if long < (i_dir ** 2).sum():
-                        axes[i].annotate("", xytext=(i_pos), xy=(i_pos + 0.01 * i_dir),
+                    for i_annotate, (i_pos, i_dir) in enumerate(zip(pos, dire)):
+                        if long < (i_dir ** 2).sum():
+                            plt.annotate("", xytext=(i_pos), xy=(i_pos + 0.01 * i_dir),
                                          arrowprops=dict(arrowstyle="<-", facecolor=cmap(k), edgecolor=cmap(k)),
                                          size=15 - 10 * (i_annotate / dire.shape[0] - 1))
 
-        for k, w_store in enumerate(core_store):
-            axes[i].plot(*w_store[-1], "o", markersize=8, label=f"process {k}", color=cmap(k))
+            for k, w_store in enumerate(core_store):
+                plt.plot(*w_store[-1], "o", markersize=8, label=f"process {k}", color=cmap(k))
 
-        axes[i].plot(*core_store[k_selected_index[i]][-1], "x", markersize=10, label=f"selected", color="r")
-        axes[i].plot(*w_star, 'r*', markersize=12, label="optimal")
-        axes[i].plot(*core_store[0][0], 'rs', markersize=5, label="w_init")
-        axes[i].set_title(f"k = {k_list[i]} {title}")
-        axes[i].legend()
-    plt.show()
+            plt.plot(*core_store[k_selected_index[i]][-1], "x", markersize=10, label=f"selected", color="r")
+            plt.plot(*w_star, 'r*', markersize=12, label="optimal")
+            plt.plot(*core_store[0][0], 'rs', markersize=5, label="w_init")
+            plt.title(f"k = {k_list[i]} {title}")
+            plt.legend()
+            plt.savefig(f"{new_dir_path_recursive}/k_{k_list[i]}{title}.png")
+            plt.show()
 
 
-def box_plot_k(result, k_list, k_string, title):
+    else:
+        fig, axes = plt.subplots(len(k_list_core_store), 1, figsize=(6, 36))
+        for i, core_store in enumerate(k_list_core_store):
+            w_star = f.w_star
+            grid_x_max, grid_y_max = np.amax(core_store, axis=(0, 1))
+            grid_x_min, grid_y_min = np.amin(core_store, axis=(0, 1))
+            grid_x_max, grid_y_max = max(grid_x_max, w_star[0]) + 1, max(grid_y_max, w_star[1]) + 1
+            grid_x_min, grid_y_min = min(grid_x_min, w_star[1]) - 1, min(grid_y_min, w_star[1]) - 1
+            xvals = np.arange(grid_x_min, grid_x_max, ((grid_x_max - grid_x_min) / 500))
+            yvals = np.arange(grid_y_min, grid_y_max, ((grid_y_max - grid_y_min) / 500))
+            X, Y = np.meshgrid(xvals, yvals)
+            Z = f.f_opt([X, Y])
+
+            # plt.pcolor(X, Y, Z, cmap=plt.cm.rainbow,shading='auto')
+            if not levels:
+                levels = [0, 1, 10, 100, 400, 1000, 10000, 100000, 1000000]
+            ctrx = axes[i].contour(X, Y, Z,
+                                   levels=levels,  # 等高線の間隔
+                                   linewidths=1,  # 等高線の幅
+                                   colors="black"
+                                   )
+            axes[i].clabel(ctrx)
+            cmap = plt.get_cmap("tab10")
+            # wの軌跡
+            if trajectory:
+                for k, w_store in enumerate(core_store):
+                    axes[i].plot(w_store.T[0], w_store.T[1], alpha=0.3, linewidth=3, color=cmap(k))
+                    pos = (np.array(w_store[:-1]) + np.array(w_store[1:])) / 2
+                    dire = np.array(w_store[:-1]) - np.array(w_store[1:])
+
+                    long = np.quantile((dire ** 2).sum(axis=1), 0.995)
+
+                    for i_annotate, (i_pos, i_dir) in enumerate(zip(pos, dire)):
+                        if long < (i_dir ** 2).sum():
+                            axes[i].annotate("", xytext=(i_pos), xy=(i_pos + 0.01 * i_dir),
+                                             arrowprops=dict(arrowstyle="<-", facecolor=cmap(k), edgecolor=cmap(k)),
+                                             size=15 - 10 * (i_annotate / dire.shape[0] - 1))
+
+            for k, w_store in enumerate(core_store):
+                axes[i].plot(*w_store[-1], "o", markersize=8, label=f"process {k}", color=cmap(k))
+
+            axes[i].plot(*core_store[k_selected_index[i]][-1], "x", markersize=10, label=f"selected", color="r")
+            axes[i].plot(*w_star, 'r*', markersize=12, label="optimal")
+            axes[i].plot(*core_store[0][0], 'rs', markersize=5, label="w_init")
+            axes[i].set_title(f"k = {k_list[i]} {title}")
+            axes[i].legend()
+        plt.show()
+
+
+def box_plot_k(result, k_list, k_string, title, folder_title="",saving_png=False):
     fdic = {
         "size": 20,
     }
@@ -192,6 +246,11 @@ def box_plot_k(result, k_list, k_string, title):
     ax1.set_xticklabels(columns, fontsize=20)
     ax1.set_title(f'{title}', fontsize=10)
     ax1.set_xlabel('k', fontdict=fdic)
+    if saving_png:
+        now = datetime.datetime.now()
+        new_dir_path_recursive = f"save_result_data/{folder_title}box_plot_image_{now:%m:%d:%H:%M:%S}"
+        os.makedirs(new_dir_path_recursive)
+        plt.savefig(f"{new_dir_path_recursive}/{title}.png")
 
     plt.show()
 
