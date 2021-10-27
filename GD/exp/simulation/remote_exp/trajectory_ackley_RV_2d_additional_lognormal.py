@@ -17,17 +17,14 @@ if __name__ == "__main__":
     n = 10000
     k_list = [1, 2, 4, 5, 10, 20]
     # ノイズの種類（勾配）
-    noise_type_list = ["lognormal", "normal", "student_t"]
+    noise_type_list = ["lognormal"]
 
 
     # ノイズの分散（勾配）
     def noise_var(noise_type):
         if noise_type == "lognormal":
-            return [1.2, 1.75, 1.9]
-        elif noise_type == "normal":
-            return [1.5, 1.9, 2.2]
-        elif noise_type == "student_t":
-            return [1.5, 3, 5]
+            return [1.1, 1.05]
+
         else:
             raise ValueError("lognormalかnormalかsutdent_tで")
 
@@ -37,14 +34,14 @@ if __name__ == "__main__":
     f_E_var = 1.75
 
     # 初期値
-    w_init_list_0 = [-5, 1, 5]
-    w_init_list_1 = [-5, 1, 5]
+    w_init_list_0 = [-5, 5]
+    w_init_list_1 = [-5, 5]
 
     k_string = [f"{i + 1}" for i in k_list]
 
     now = datetime.datetime.now()
 
-    new_dir_path_recursive = f"remote_save_result/Ackley_2d_trajectory{now:%m:%d:%H:%M:%S}"
+    new_dir_path_recursive = f"remote_save_result/Ackley_2d_trajectory_additional_lognormal{now:%m:%d:%H:%M:%S}"
     os.makedirs(new_dir_path_recursive)
 
     for noise_type in tqdm(noise_type_list):
