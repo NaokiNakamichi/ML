@@ -123,12 +123,10 @@ def w_value_2d_k_candidates_contour(f, core_store, _t_max, selected_index, title
 
 
 def multiple_w_value_2d_k_candidates_contour(f, k_list, k_list_core_store, _t_max, k_selected_index,
-                                             title="w trajectory",
+                                             title="w trajectory", folder_title="",
                                              trajectory=True, levels=None, saving_png=False):
     if saving_png:
-        now = datetime.datetime.now()
-        new_dir_path_recursive = f"save_result_data/{f.name}_2d_trajectory_image_{now:%m:%d:%H:%M:%S}"
-        os.makedirs(new_dir_path_recursive)
+        new_dir_path_recursive = folder_title
         for i, core_store in enumerate(k_list_core_store):
             plt.figure(figsize=(6, 6))
             w_star = f.w_star
@@ -225,7 +223,7 @@ def multiple_w_value_2d_k_candidates_contour(f, k_list, k_list_core_store, _t_ma
         plt.show()
 
 
-def box_plot_k(result, k_list, k_string, title, folder_title="",saving_png=False):
+def box_plot_k(result, k_list, k_string, title, folder_title="", saving_png=False):
     fdic = {
         "size": 20,
     }
@@ -247,9 +245,8 @@ def box_plot_k(result, k_list, k_string, title, folder_title="",saving_png=False
     ax1.set_title(f'{title}', fontsize=10)
     ax1.set_xlabel('k', fontdict=fdic)
     if saving_png:
-        now = datetime.datetime.now()
-        new_dir_path_recursive = f"save_result_data/{folder_title}box_plot_image_{now:%m:%d:%H:%M:%S}"
-        os.makedirs(new_dir_path_recursive)
+        new_dir_path_recursive = folder_title
+
         plt.savefig(f"{new_dir_path_recursive}/{title}.png")
 
     plt.show()
