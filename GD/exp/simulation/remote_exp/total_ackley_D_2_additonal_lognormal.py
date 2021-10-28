@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # ノイズの分散（勾配）
     def noise_var(noise_type):
         if noise_type == "lognormal":
-            return [1.1,1.05]
+            return [0.5, 0.7, 0.9]
 
         else:
             raise ValueError("lognormalかnormalかsutdent_tで")

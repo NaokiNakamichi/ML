@@ -23,7 +23,7 @@ if __name__ == "__main__":
     # ノイズの分散（勾配）
     def noise_var(noise_type):
         if noise_type == "lognormal":
-            return [1.1, 1.05]
+            return [0.5, 0.7, 0.9]
 
         else:
             raise ValueError("lognormalかnormalかsutdent_tで")
@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
     now = datetime.datetime.now()
 
-    new_dir_path_recursive = f"remote_save_result/Ackley_2d_trajectory_additional_lognormal{now:%m:%d:%H:%M:%S}"
+    new_dir_path_recursive = f"remote_save_result/Ackley_2d_trajectory_additional_lognormal_0hoge_{now:%m:%d:%H:%M:%S}"
     os.makedirs(new_dir_path_recursive)
 
     for noise_type in tqdm(noise_type_list):
