@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     # 検証時に加える関数値にノイズの種類
     noise_type_f = "lognormal"
-    f_E_var = 1.75
+    f_E_var = 1.2
 
     # 初期値
     w_init_list_0 = [-5, 5]

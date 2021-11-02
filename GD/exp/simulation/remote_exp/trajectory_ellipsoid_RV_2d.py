@@ -25,23 +25,22 @@ if __name__ == "__main__":
     # ノイズの分散（勾配）
     def noise_var(noise_type):
         if noise_type == "lognormal":
-            return [1.2, 1.75, 1.9]
+            return [1.2, 1.75]
         elif noise_type == "normal":
-            return [1.5, 1.9, 2.2]
+            return [2.2]
         elif noise_type == "student_t":
-            return [1.5, 3, 5]
+            return [1.5, 3]
         else:
             raise ValueError("lognormalかnormalかsutdent_tで")
 
 
     # 検証時に加える関数値にノイズの種類
     noise_type_f = "lognormal"
-    f_E_var = 1.75
+    f_E_var = 1.2
 
     # 初期値
-    w_init_list_0 = [-5, 1, 5]
-    w_init_list_1 = [-5, 1, 5]
-
+    w_init_list_0 = [1, 3, 5]
+    w_init_list_1 = [1, 3, 5]
     k_string = [f"{i + 1}" for i in k_list]
 
     now = datetime.datetime.now()

@@ -23,25 +23,27 @@ if __name__ == "__main__":
     noise_type_list = ["lognormal", "normal", "student_t"]
 
     E_var = 1.75
+
+
     # ノイズの分散（勾配）
     def noise_var(noise_type):
         if noise_type == "lognormal":
-            return [1.2,1.75,1.9]
+            return [1.2, 1.75]
         elif noise_type == "normal":
-            return [1.5,1.9,2.2]
+            return [2.2]
         elif noise_type == "student_t":
-            return [1.5,3,5]
+            return [1.5, 3]
         else:
             raise ValueError("lognormalかnormalかsutdent_tで")
 
 
     # 検証時に加える関数値にノイズの種類
     noise_type_f = "lognormal"
-    f_E_var = 1.75
+    f_E_var = 1.2
 
     # 初期値
-    w_init_list_0 = [-5, 1, 5]
-    w_init_list_1 = [-5, 1, 5]
+    w_init_list_0 = [1, 3, 5]
+    w_init_list_1 = [1, 3, 5]
 
     k_string = [f"{i + 1}" for i in k_list]
 
@@ -55,7 +57,8 @@ if __name__ == "__main__":
         for E_var in tqdm(noise_var_list):
             for w_init_0 in w_init_list_0:
                 for w_init_1 in w_init_list_1:
-                    son = loss.Ellipsoid(d=d, noise_type=noise_type, E_var=E_var, f_E_var=f_E_var, noise_type_f=noise_type_f)
+                    son = loss.Ellipsoid(d=d, noise_type=noise_type, E_var=E_var, f_E_var=f_E_var,
+                                         noise_type_f=noise_type_f)
                     RV = RV_SGDAve.RVSGDByW(model_opt=son, c=c, n=n, lr=lr)
                     w_init = np.array([w_init_0, w_init_1])
                     _, result = RV.many_trails(trial_num=trial_num, max_k=k_list[-1] + 1, w_init=w_init)
