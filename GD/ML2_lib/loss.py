@@ -235,6 +235,7 @@ class Ellipsoid(LossInit):
                                         f_E_var=f_E_var)
 
         self.name = "Ellipsoid"
+        self.w_star = np.zeros(d)
 
     def f_opt(self, w):
         f = 0
