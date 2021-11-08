@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # ノイズの分散（勾配）
     def noise_var(noise_type):
         if noise_type == "lognormal":
-            return [1.2, 1.75]
+            return [1.2, 1.75,1.9]
         elif noise_type == "normal":
             return [2.2]
         elif noise_type == "student_t":
