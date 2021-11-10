@@ -240,8 +240,8 @@ class Ellipsoid(LossInit):
     def f_opt(self, w):
         f = 0
         if self.d == 2:
-            for i in range(1,self.d+1):
-                f += (1000 ** ((i - 1) / (self.d - 1)) * w[i-1]) ** 2
+            for i in range(1, self.d + 1):
+                f += (1000 ** ((i - 1) / (self.d - 1)) * w[i - 1]) ** 2
 
         if self.noise_type_f:
             f += self.generate_noise_f()[0]
@@ -257,3 +257,37 @@ class Ellipsoid(LossInit):
             g = g + self.generate_noise()
 
         return g
+
+
+class Rastrigin(LossInit):
+    def __init__(self, d, noise_type=None, E_var=1.75, noise_type_f=None, f_E_var=1.75):
+        super(Rastrigin, self).__init__(d=d, noise_type=noise_type, E_var=E_var, noise_type_f=noise_type_f,
+                                        f_E_var=f_E_var)
+
+        self.name = "Rastrigin"
+        self.w_star = np.zeros(d)
+
+    def f_opt(self, w):
+        f = 0
+        for i in range(self.d):
+            f += self.f_helper(w[i])
+
+        f += 10 * self.d
+        if self.noise_type_f:
+            f += self.generate_noise_f()[0]
+
+        return f
+
+    def g_opt(self, w):
+        g = 0
+        if self.d == 2:
+            tmp = np.array([w[0], w[1]])
+            g = 2 * tmp + 20 * np.pi * np.sin(2 * np.pi * tmp)
+
+        if self.noise_type:
+            g = g + self.generate_noise()
+
+        return g
+
+    def f_helper(self, x):
+        return x ** 2 - 10 * np.cos(2 * np.pi * x)
