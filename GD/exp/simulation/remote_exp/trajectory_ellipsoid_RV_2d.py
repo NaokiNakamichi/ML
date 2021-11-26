@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     d = 2
     trial_num = 100
-    lr = 0.1
+    lr = 0.01
 
     c = 1
 
