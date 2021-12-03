@@ -76,12 +76,15 @@ def w_value_2d_heatmap(f, w_store, _t_max, title="w value"):
 
 def w_value_2d_k_candidates_contour(f, core_store, _t_max, selected_index, title="w value", levels=None,
                                     trajectory=True):
+    # 等高線を引くためのグリッド作成
     w_star = f.w_star
+    # 等高線を引くためのグリッド作成
     grid_x_max, grid_y_max = np.amax(core_store, axis=(0, 1)) + 1
     grid_x_min, grid_y_min = np.amin(core_store, axis=(0, 1)) - 1
     xvals = np.arange(grid_x_min, grid_x_max, 0.01)
     yvals = np.arange(grid_y_min, grid_y_max, 0.01)
     X, Y = np.meshgrid(xvals, yvals)
+    # グリッドにおける関数値
     Z = f.f_opt([X, Y])
 
     fig, axes = plt.subplots(1, 1, figsize=(6, 6))
@@ -114,6 +117,7 @@ def w_value_2d_k_candidates_contour(f, core_store, _t_max, selected_index, title
     for k, w_store in enumerate(core_store):
         axes.plot(*w_store[-1], "o", markersize=10, label=f"process {k}", color=cmap(k))
 
+    # 諸々の点、開始点とか最適値とか
     axes.plot(*core_store[selected_index][-1], "8", markersize=10, label=f"selected", color="k")
     axes.plot(*w_star, 'k*', markersize=12, label="optimal")
     axes.plot(*core_store[0][0], 'ks', markersize=5, label="w_init")
