@@ -6,6 +6,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.optim.swa_utils import AveragedModel
 import copy
+from sklearn.metrics import confusion_matrix, classification_report
 
 
 class SGDTorch:
@@ -13,21 +14,27 @@ class SGDTorch:
         self.lr = lr
         self.model = nn.Module()
 
-    def learn(self, x, y, model):
+    def learn(self, x, y, model, class_num,X_test = None,Y_test=None):
         x = torch.tensor(x).float()
         y = torch.LongTensor(y)
+        feature_num = x.shape[1]
         w_stack = []
-        b_stack = []
         sample_num = y.shape[0]
         model.parameter_init()
         swa_model = AveragedModel(model)
-        w_transition = []
+        loss_stack = []
+        test_loss_stock = []
+        accuracy_stack = []
+        last = 0
         for j in range(sample_num):
-            print(j)
             optimizer = optim.SGD(model.parameters(), lr=self.lr)
             optimizer.zero_grad()
-            output = model(x[j])
-            loss = F.nll_loss(output, y[j])
+            output = model(x[j]).reshape(-1, class_num)
+            # 　リサイズ　tensor(0) -> tensor([0])
+            y_j = torch.unsqueeze(y[j], 0)
+            loss = F.nll_loss(output, y_j)
+
+            # print(loss)
 
             # Back Propagation
             loss.backward()
@@ -37,15 +44,30 @@ class SGDTorch:
                 swa_model.update_parameters(model)
 
             # 正解率の計算
-            prediction = output.data.max(1)[1]
-            accuracy = prediction.eq(y).sum().numpy() / y.shape[0]
+            Y_test = torch.LongTensor(Y_test)
+            if X_test is not None:
+                with torch.no_grad():
+                    y_test_pred = model(torch.tensor(X_test).float())
+                    testloss = F.nll_loss(y_test_pred, Y_test)
+                    prediction = y_test_pred.data.max(1)[1]
 
-            w_transition.append(copy.deepcopy(model))
+                    test_loss_stock.append(testloss.item())
 
-            w_stack.append(torch.stack(w_transition))
-            # :TODO 線形のため一層のみのスタックになって。要改善
+                    if j % 1000 == 0:
 
-        return model, w_stack, b_stack
+                        # print(f"prediction : {prediction.item()} y : {y_j}")
+                        print(f"step : {j}")
+                        accuracy = prediction.eq(Y_test).sum().numpy() / Y_test.shape[0]
+                        print(confusion_matrix(Y_test, prediction))
+                        print(classification_report(Y_test, prediction))
+                        print(f"正解率 : {accuracy}")
+
+            w_stack.append(swa_model)
+            loss_stack.append(loss.item())
+            last = model.state_dict()
+            accuracy_stack.append(prediction.eq(Y_test).sum().numpy() / Y_test.shape[0])
+
+        return model, w_stack, loss_stack, test_loss_stock, accuracy_stack
 
     def transition(self, k, train_x, train_y, transition_x, transition_y, model):
         _, w_stack, b_stack = self.learn(k, train_x, train_y, model)

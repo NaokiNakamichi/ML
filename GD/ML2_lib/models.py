@@ -40,18 +40,18 @@ class Net(nn.Module):
 
     def forward(self, x):
         x = self.fc1(x)
-        x = self.relu(x)
-        x = self.fc2(x)
-        x = self.relu(x)
+        # x = self.relu(x)
+        # x = self.fc2(x)
+        # x = self.relu(x)
         x = self.fc3(x)
         # dimは0なら列単位でSoftmaxをかけてくれる。1なら行単位でSoftmaxをかけてくれる。
-        return F.log_softmax(x, dim=1)
+        return F.log_softmax(x, dim=0)
 
     # モデルパラメータを初期化
     def parameter_init(self):
         nn.init.uniform_(self.fc1.weight, -5, 5)
-        nn.init.uniform_(self.fc2.weight,-5,5)
-        nn.init.uniform_(self.fc3.weight,-5,5)
-        nn.init.constant_(self.fc1.bias,0)
-        nn.init.constant_(self.fc2.bias,0)
-        nn.init.constant_(self.fc3.bias,0)
+        nn.init.constant_(self.fc1.bias, 0)
+        nn.init.uniform_(self.fc2.weight, -5, 5)
+        nn.init.constant_(self.fc2.bias, 0)
+        nn.init.uniform_(self.fc3.weight, -5, 5)
+        nn.init.constant_(self.fc3.bias, 0)

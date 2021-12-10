@@ -280,7 +280,7 @@ class RVSGDRealData(RVSGD):
         return loss_transition
 
 
-class RVSGDByTorch():
+class RVSGDByTorch:
     def __init__(self, lr):
         self.lr = lr
         self.model = nn.Module()
