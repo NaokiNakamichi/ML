@@ -1,5 +1,5 @@
 import numpy as np
-
+import torch
 from torch import nn
 import torch.nn.functional as F
 
@@ -21,7 +21,14 @@ class LinearClassification(nn.Module):
         self.fc1 = nn.Linear(w_num, c_num)
 
     def forward(self, x):
+        print(len(x.shape))
+
+        if len(x.shape) == 1:
+            x = torch.unsqueeze(x, 0)
+
+        # print(f"front{x}")
         x = self.fc1(x)
+        # print(f"rear{x}")
         return F.log_softmax(x, dim=1)
 
     def parameter_init(self):
@@ -39,13 +46,16 @@ class Net(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, x):
+        if len(x.shape) == 1:
+            x = torch.unsqueeze(x, 0)
+
         x = self.fc1(x)
-        # x = self.relu(x)
-        # x = self.fc2(x)
-        # x = self.relu(x)
+        x = self.relu(x)
+        x = self.fc2(x)
+        x = self.relu(x)
         x = self.fc3(x)
         # dimは0なら列単位でSoftmaxをかけてくれる。1なら行単位でSoftmaxをかけてくれる。
-        return F.log_softmax(x, dim=0)
+        return F.log_softmax(x, dim=1)
 
     # モデルパラメータを初期化
     def parameter_init(self):

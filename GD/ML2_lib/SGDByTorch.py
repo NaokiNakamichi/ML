@@ -29,6 +29,7 @@ class SGDTorch:
         for j in range(sample_num):
             optimizer = optim.SGD(model.parameters(), lr=self.lr)
             optimizer.zero_grad()
+            # print(x[j])
             output = model(x[j]).reshape(-1, class_num)
             # 　リサイズ　tensor(0) -> tensor([0])
             y_j = torch.unsqueeze(y[j], 0)
@@ -53,7 +54,7 @@ class SGDTorch:
 
                     test_loss_stock.append(testloss.item())
 
-                    if j % 1000 == 0:
+                    if j % 10 == 0:
 
                         # print(f"prediction : {prediction.item()} y : {y_j}")
                         print(f"step : {j}")
