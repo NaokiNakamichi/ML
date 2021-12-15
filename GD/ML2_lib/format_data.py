@@ -10,10 +10,11 @@ from sklearn.preprocessing import LabelBinarizer
 
 
 class Format:
-    def __init__(self, name_path, train_path, test_path):
+    def __init__(self, name_path, train_path, test_path,is_print_data_information=False):
         self.name_path = name_path
         self.train_path = train_path
         self.test_path = test_path
+        self.is_print_data_information = is_print_data_information
 
     def make_col_names(self):
         col_names = []
@@ -33,7 +34,8 @@ class Format:
     def load_data(self, filename, col_names, n, skiprows=None):
         df = pd.read_csv(filename, header=None, index_col=None, skiprows=skiprows)
         # Display the number of records before delete missing valeus.
-        print("the number of {} records:{}\n".format(filename, len(df.index)))
+        if self.is_print_data_information:
+            print("the number of {} records:{}\n".format(filename, len(df.index)))
         df.columns = col_names
 
         # Replace the missing value's character to np.nan.
@@ -44,11 +46,13 @@ class Format:
         df = df.applymap(lambda d: " >50K" if d == " >50K." else d)
 
         # Display the information about missing values and
-        print("missing value info:\n{}\n".format(df.isnull().sum(axis=0)))
+        if self.is_print_data_information:
+            print("missing value info:\n{}\n".format(df.isnull().sum(axis=0)))
         df = df.dropna(axis=0)
 
         # the number of records after delete missing valeus.
-        print("the number of {} records after trimming:{}\n".format(filename, len(df.index)))
+        if self.is_print_data_information:
+            print("the number of {} records after trimming:{}\n".format(filename, len(df.index)))
         ids = list(np.arange(n, n + len(df.index)))
         df["ID"] = np.array(ids)
         n = n + len(df.index)
@@ -68,7 +72,6 @@ class Format:
 
         # Get the dummy for the categorical data.
         for name in categorical_names:
-            print(name)
             if name == "label":
                 # ここではOneHotEncordingではなくLabelEncording
                 # F .nll_lossの関係で
