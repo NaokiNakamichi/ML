@@ -58,4 +58,4 @@ class ExManyTrials:
 
         print(col_name_list)
 
-        return result_accuracy, result_test_loss
+        return result_accuracy, result_test_loss, col_name_list
