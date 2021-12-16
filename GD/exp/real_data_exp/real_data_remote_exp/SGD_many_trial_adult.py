@@ -9,7 +9,7 @@ from ML2_lib import models
 import datetime
 
 if __name__ == "__main__":
-    trial_num = 2
+    trial_num = 25
 
     name_path = "adult/adult_classification.names"
     train_path = "adult/adult_classification.csv"
