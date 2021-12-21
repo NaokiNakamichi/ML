@@ -7,7 +7,7 @@ from ML2_lib import SGDByTorch
 import torch.nn.functional as F
 import torch
 from sklearn.preprocessing import LabelBinarizer
-
+from torchvision.datasets import MNIST
 
 class Format:
     def __init__(self, name_path, train_path, test_path,is_print_data_information=False):
@@ -109,4 +109,23 @@ class Format:
         df_train, n_id_train = self.load_data(self.train_path, col_names, n_id)
         df_test, n_id_test = self.load_data(self.test_path, col_names, n_id_train, skiprows=1)
         X_train, y_train, X_test, y_test = self.convert_data(df_train, df_test, n_id_train, n_id_test, continuous_dicts)
+        return X_train, y_train, X_test, y_test
+
+
+class MNIST_data:
+    def __init__(self):
+        pass
+
+    def return_data(self):
+
+        mnist_data = MNIST('data/MNIST', download=False)
+
+        X_train = mnist_data.train_data.reshape(-1, 784)
+        X_test = mnist_data.test_data.reshape(-1, 784)
+        y_train = mnist_data.train_labels
+        y_test = mnist_data.test_labels
+
+        X_train = X_train / 255.0
+        X_test = X_test / 255.0
+
         return X_train, y_train, X_test, y_test

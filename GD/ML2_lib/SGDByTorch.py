@@ -14,7 +14,11 @@ class SGDTorch:
         self.lr = lr
         self.model = nn.Module()
 
-    def learn(self, x, y, model, class_num,X_test = None,Y_test=None):
+    def learn(self, x, y, model, class_num,X_test = None,Y_test=None, early_stopping = 0):
+
+        if type(x) != torch.Tensor:
+
+            x = torch.from_numpy(x.astype(np.float32)).clone()
         x = torch.tensor(x).float()
         y = torch.LongTensor(y)
         sample_num = y.shape[0]
@@ -44,19 +48,26 @@ class SGDTorch:
 
                     # test_loss_stock.append(testloss.item())
 
+                    accuracy = prediction.eq(Y_test).sum().numpy() / Y_test.shape[0]
+
                     if j % 1000 == 0:
 
                         # print(f"prediction : {prediction.item()} y : {y_j}")
                         print(f"step : {j}")
-                        accuracy = prediction.eq(Y_test).sum().numpy() / Y_test.shape[0]
+
                         print(confusion_matrix(Y_test, prediction))
                         print(classification_report(Y_test, prediction))
                         print(f"正解率 : {accuracy}")
-                        print(f"正解率 : {testloss}")
+                        print(f"test loss : {testloss}")
+
+            if early_stopping != 0:
+                if early_stopping == j:
+                    return model,accuracy
 
 
 
-        return model
+
+        return model,accuracy
 
 
 class SGDAveTorch:

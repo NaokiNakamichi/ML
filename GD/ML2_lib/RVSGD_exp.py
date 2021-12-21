@@ -43,7 +43,7 @@ def e_var_exp(d, trial_num, lr, c, noise, E_var_list, w_init, k_list, n, noise_t
         RV = RV_SGDAve.RVSGDByW(model_opt=son, c=c, n=n, lr=lr)
         _, result = RV.many_trails(trial_num=trial_num, max_k=k_list[-1] + 1, w_init=w_init)
         # title = "f"
-        # plot_set.box_plot_k(result, k_list, k_string, title)
+        # plot_set.box_plot_k(result_optuna, k_list, k_string, title)
 
         df = pd.DataFrame(result[:, k_list], columns=k_string)
         df.to_csv(
