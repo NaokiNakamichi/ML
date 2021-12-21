@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
 
     def objective(trial: optuna.trial):
-        lr = trial.suggest_uniform("lr", 0, 1)
+        lr = trial.suggest_loguniform("lr", 1e-7, 1e0)
         ret = f(lr)
 
         return ret
