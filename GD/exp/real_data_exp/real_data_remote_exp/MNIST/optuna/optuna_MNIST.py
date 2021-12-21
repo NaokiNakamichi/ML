@@ -61,4 +61,4 @@ if __name__ == "__main__":
 
     now = datetime.datetime.now()
 
-    joblib.dump(study, f"result_optuna/study_MNIST_linear{now}.pkl")
+    joblib.dump(study, f"result_optuna/study_MNIST_{model_type}_{now}.pkl")
