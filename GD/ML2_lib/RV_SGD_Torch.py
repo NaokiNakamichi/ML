@@ -74,7 +74,7 @@ class RVSGDByTorch:
 
         return model_candidates[selected_index]
 
-    def prediction(self, x, y, model):
+    def prediction(self, x, y, model,is_print=False):
         y = torch.LongTensor(y)
         with torch.no_grad():
             y_test_pred = model(torch.tensor(x).float())
@@ -87,9 +87,10 @@ class RVSGDByTorch:
 
             # print(f"prediction : {prediction.item()} y : {y_j}"
 
-            print(confusion_matrix(y, prediction))
-            print(classification_report(y, prediction))
-            print(f"正解率 : {accuracy}")
-            print(f"test loss : {testloss}")
+            if is_print:
+                print(confusion_matrix(y, prediction))
+                print(classification_report(y, prediction))
+                print(f"正解率 : {accuracy}")
+                print(f"test loss : {testloss}")
 
         return testloss, accuracy
