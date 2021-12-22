@@ -14,15 +14,15 @@ class SGDTorch:
         self.lr = lr
         self.model = nn.Module()
 
-    def learn(self, x, y, model, class_num,X_test = None,Y_test=None, early_stopping = 0):
+    def learn(self, x, y, model, class_num, X_test=None, Y_test=None, early_stopping=0):
 
         if type(x) != torch.Tensor:
-
             x = torch.from_numpy(x.astype(np.float32)).clone()
-        x = torch.tensor(x).float()
-        y = torch.LongTensor(y)
+        # x = torch.tensor(x).float()
+        # y = torch.LongTensor(y)
         sample_num = y.shape[0]
-        model.parameter_init()
+        # model.parameter_init()
+        accuracy = 0
         for j in range(sample_num):
             optimizer = optim.SGD(model.parameters(), lr=self.lr)
             optimizer.zero_grad()
@@ -32,11 +32,12 @@ class SGDTorch:
             y_j = torch.unsqueeze(y[j], 0)
             loss = F.nll_loss(output, y_j)
 
-            # print(loss)
-
             # Back Propagation
             loss.backward()
             optimizer.step()
+
+            self.model = model
+
 
             # 正解率の計算
             if X_test is not None:
@@ -51,7 +52,6 @@ class SGDTorch:
                     accuracy = prediction.eq(Y_test).sum().numpy() / Y_test.shape[0]
 
                     if j % 1000 == 0:
-
                         # print(f"prediction : {prediction.item()} y : {y_j}")
                         print(f"step : {j}")
 
@@ -62,12 +62,9 @@ class SGDTorch:
 
             if early_stopping != 0:
                 if early_stopping == j:
-                    return model,accuracy
+                    return model, accuracy
 
-
-
-
-        return model,accuracy
+        return model, accuracy
 
 
 class SGDAveTorch:
@@ -75,7 +72,7 @@ class SGDAveTorch:
         self.lr = lr
         self.model = nn.Module()
 
-    def learn(self, x, y, model, class_num,X_test = None,Y_test=None):
+    def learn(self, x, y, model, class_num, X_test=None, Y_test=None):
         x = torch.tensor(x).float()
         y = torch.LongTensor(y)
         sample_num = y.shape[0]
@@ -100,8 +97,6 @@ class SGDAveTorch:
             if j > 5:
                 swa_model.update_parameters(model)
 
-
-
         return swa_model
 
 
@@ -110,7 +105,7 @@ class SGDTorchCheck:
         self.lr = lr
         self.model = nn.Module()
 
-    def learn(self, x, y, model, class_num,X_test = None,Y_test=None):
+    def learn(self, x, y, model, class_num, X_test=None, Y_test=None):
         x = torch.tensor(x).float()
         y = torch.LongTensor(y)
         sample_num = y.shape[0]
@@ -138,8 +133,9 @@ class SGDTorchCheck:
                 swa_model.update_parameters(self.model)
 
             # 正解率の計算
-            Y_test = torch.LongTensor(Y_test)
+
             if X_test is not None:
+                Y_test = torch.LongTensor(Y_test)
 
                 with torch.no_grad():
 
@@ -150,7 +146,6 @@ class SGDTorchCheck:
                     test_loss_stock.append(testloss.item())
 
                     if j % 1000 == 0:
-
                         # print(f"prediction : {prediction.item()} y : {y_j}")
                         print(f"step : {j}")
                         print(self.model.state_dict())
@@ -163,9 +158,5 @@ class SGDTorchCheck:
             loss_stack.append(loss.item())
             last = self.model.state_dict()
             accuracy_stack.append(prediction.eq(Y_test).sum().numpy() / Y_test.shape[0])
-
-
-
-
 
         return self.model, loss_stack, test_loss_stock, accuracy_stack
