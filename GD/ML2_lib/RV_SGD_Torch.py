@@ -16,11 +16,13 @@ from ML2_lib import valid
 
 
 class RVSGDByTorch:
-    def __init__(self, lr, xtest=None, ytest=None):
+    def __init__(self, lr, xtest=None, ytest=None, xvalid=None, yvalid=None):
         self.lr = lr
         self.model = nn.Module()
         self.x_test = xtest
         self.y_test = ytest
+        self.x_valid = xvalid
+        self.y_valid = yvalid
 
     def learn(self, k, x, y, model_type):
         class_num = int(max(y) + 1)
@@ -28,7 +30,6 @@ class RVSGDByTorch:
         sep_num = n // k
         model_list = []
         w_dim = x.shape[1]
-        class_num = 10
         unit_num = 512
 
         for i in range(k):
@@ -67,14 +68,21 @@ class RVSGDByTorch:
                     output = model_candidates[i](valid_x[j * sep_num:j * sep_num + sep_num])
                     loss = F.nll_loss(output, valid_y[j * sep_num:j * sep_num + sep_num])
                     tmp_loss.append(loss.item())
-            print(tmp_loss)
+            # print(tmp_loss)
             valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=3))
 
         selected_index = np.argmin(valid_loss_store)
 
         return model_candidates[selected_index]
 
-    def prediction(self, x, y, model,is_print=False):
+
+    def run_RVSGD(self,x_train,y_train,valid_x,valid_y,k,model_type):
+        model_candidates = self.learn(k,x_train,y_train,model_type)
+        result_model = self.valid(model_candidates=model_candidates,k=k,valid_x=valid_x,valid_y=valid_y)
+        return result_model
+
+
+    def prediction(self, x, y, model, is_print=False):
         y = torch.LongTensor(y)
         with torch.no_grad():
             y_test_pred = model(torch.tensor(x).float())
