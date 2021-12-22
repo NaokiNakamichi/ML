@@ -16,7 +16,7 @@ if __name__ == "__main__":
     early_stopping = int(sys.argv[2])
     model_type = sys.argv[3]
 
-    mnist_data = MNIST('data/MNIST', download=True, )
+    mnist_data = MNIST('data/MNIST', download=False, )
 
     # X_train = mnist_data.train_data.reshape(-1,784)
     # X_test = mnist_data.test_data.reshape(-1,784)
@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     w_dim = X_train.shape[1]
     class_num = int(max(y_train) + 1)
-    unit_num = 5
+    unit_num = 512
 
     if "linear" == model_type:
         model = models.LinearClassification(w_num=w_dim, c_num=class_num)
