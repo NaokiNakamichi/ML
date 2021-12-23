@@ -24,6 +24,8 @@ if __name__ == "__main__":
     lr_list = [0.1, 0.01, 0.001]
     model_type_list = ["linear", "FF_L1", "FF_L2"]
 
+    max_k = 10
+
     lr_dic = {"linear": [0.1,0.2,0.3], "FF_L1":[0.01,0.02,0.03], "FF_L2":[0.001,0.002,0.003]}
 
     for model_type in tqdm(model_type_list):
@@ -35,7 +37,7 @@ if __name__ == "__main__":
 
             col_name_list = []
 
-            for k in range(1, 10):
+            for k in range(1, max_k):
                 col_name_list.append(f"k_{k}")
 
 
@@ -47,7 +49,7 @@ if __name__ == "__main__":
                 hoge = RV_SGD_Torch.RVSGDByTorch(lr=lr)
                 k_model_list = []
 
-                for k in range(1, 10):
+                for k in range(1, max_k):
                     result_model = hoge.run_RVSGD(x_train=X_train, y_train=y_train, valid_x=X_valid, valid_y=y_valid, k=k,
                                                   model_type=model_type)
                     k_model_list.append(result_model)
