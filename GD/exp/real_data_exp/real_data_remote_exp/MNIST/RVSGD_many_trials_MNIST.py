@@ -12,8 +12,10 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 
+import sys
+
 if __name__ == "__main__":
-    trial_num = 3
+    n_trials = int(sys.argv[1])
 
     X_train, y_train, X_test, y_test = format_data.MNIST_data().return_data()
     X_train, X_valid = train_test_split(X_train, test_size=0.1, shuffle=False)
@@ -32,7 +34,7 @@ if __name__ == "__main__":
             col_name_list.append(f"RVSGD_model_{model_type}_lr_{lr}_k_{k}")
 
 
-    for i in tqdm(range(trial_num)):
+    for i in tqdm(range(n_trials)):
 
         trial_result_loss = []
         trial_result_accuracy = []
