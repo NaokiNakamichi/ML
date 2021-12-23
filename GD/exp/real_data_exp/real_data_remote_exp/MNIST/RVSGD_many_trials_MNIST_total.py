@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     lr_dic = {"linear": [0.1,0.2,0.3], "FF_L1":[0.01,0.02,0.03], "FF_L2":[0.001,0.002,0.003]}
 
-    for model_type in model_type_list:
+    for model_type in tqdm(model_type_list):
         lr_list = lr_dic[model_type]
         for lr in lr_list:
 
