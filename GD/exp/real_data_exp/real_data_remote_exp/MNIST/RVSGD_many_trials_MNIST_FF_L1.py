@@ -59,5 +59,6 @@ if __name__ == "__main__":
 
     result_accuracy_pd = pd.DataFrame(np.array(result_accuracy), columns=col_name_list)
 
-    result_accuracy_pd.to_csv(f"result_data/RVSGD_MNIST_trial_{n_trials}_{now}_model_FF_L1.csv",index=False)
+    result_accuracy_pd.to_csv(f"RVSGD_MNIST_trial_{n_trials}_{now}_model_FF_L1.csv",index=False)
+
 
