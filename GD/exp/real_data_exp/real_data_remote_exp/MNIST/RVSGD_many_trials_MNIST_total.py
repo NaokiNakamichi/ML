@@ -21,7 +21,7 @@ if __name__ == "__main__":
     X_train, X_valid = train_test_split(X_train, test_size=0.1, shuffle=False)
     y_train, y_valid = train_test_split(y_train, test_size=0.1, shuffle=False)
 
-    model_type_list = ["linear", "FF_L1", "FF_L2"]
+    model_type_list = ["FF_L2"]
 
     max_k = 10
 
