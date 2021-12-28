@@ -130,3 +130,24 @@ class MNIST_data:
         X_test = X_test / 255.0
 
         return X_train, y_train, X_test, y_test
+
+
+class CIFAR10_data:
+    def __init__(self):
+        pass
+
+    def return_data(self):
+
+        mnist_data_train = MNIST('data/MNIST', download=True, train=True)
+        mnist_data_test = MNIST('data/MNIST', download=True, train=False)
+
+        X_train = mnist_data_train.train_data.reshape(-1, 784)
+        X_test = mnist_data_test.test_data.reshape(-1, 784)
+        y_train = mnist_data_train.train_labels
+        y_test = mnist_data_test.test_labels
+
+        X_train = X_train / 255.0
+        X_test = X_test / 255.0
+
+        return X_train, y_train, X_test, y_test
+

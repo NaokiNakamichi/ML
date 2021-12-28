@@ -160,3 +160,48 @@ class SGDTorchCheck:
             accuracy_stack.append(prediction.eq(Y_test).sum().numpy() / Y_test.shape[0])
 
         return self.model, loss_stack, test_loss_stock, accuracy_stack
+
+
+class SGDFromTrainLorder:
+    def __init__(self, lr):
+        self.lr = lr
+        self.model = nn.Module()
+
+    def learn(self, train_loader, model, loss_type, early_stopping=0):
+        for j in train_loader:
+            inputs, labels = j
+            optimizer = optim.SGD(model.parameters(), lr=self.lr)
+            optimizer.zero_grad()
+            # print(x[j])
+            output = model(inputs)
+            # 　リサイズ　tensor(0) -> tensor([0])
+            loss = loss_type(output, labels)
+
+            # Back Propagation
+            loss.backward()
+            optimizer.step()
+
+            if early_stopping != 0:
+                if early_stopping == j:
+                    return model
+        self.model = model
+
+        return model
+
+    def test_accuracy(self,test_loader):
+        correct = 0
+        total = 0
+        # 勾配を記憶せず（学習せずに）に計算を行う
+        with torch.no_grad():
+            for data in test_loader:
+                images, labels = data
+                outputs = self.model(images)
+                _, predicted = torch.max(outputs.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+        print('Accuracy of the network on the 10000 test images: %d %%' % (100 * correct / total))
+
+        accuracy = correct/total
+
+        return accuracy
+
