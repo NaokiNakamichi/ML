@@ -59,4 +59,4 @@ if __name__ == "__main__":
 
     now = datetime.datetime.now()
 
-    joblib.dump(study, f"result_optuna/study_CIFAR10_{now}.pkl")
+    joblib.dump(study, f"result_optuna/study_FASIONMNIST_{now}.pkl")
