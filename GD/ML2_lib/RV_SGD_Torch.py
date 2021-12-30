@@ -14,6 +14,8 @@ from ML2_lib import models
 
 from ML2_lib import valid
 
+from tqdm import tqdm
+
 
 class RVSGDByTorch:
     def __init__(self, lr, xtest=None, ytest=None, xvalid=None, yvalid=None):
@@ -75,12 +77,10 @@ class RVSGDByTorch:
 
         return model_candidates[selected_index]
 
-
-    def run_RVSGD(self,x_train,y_train,valid_x,valid_y,k,model_type):
-        model_candidates = self.learn(k,x_train,y_train,model_type)
-        result_model = self.valid(model_candidates=model_candidates,k=k,valid_x=valid_x,valid_y=valid_y)
+    def run_RVSGD(self, x_train, y_train, valid_x, valid_y, k, model_type):
+        model_candidates = self.learn(k, x_train, y_train, model_type)
+        result_model = self.valid(model_candidates=model_candidates, k=k, valid_x=valid_x, valid_y=valid_y)
         return result_model
-
 
     def prediction(self, x, y, model, is_print=False):
         y = torch.LongTensor(y)
@@ -102,3 +102,60 @@ class RVSGDByTorch:
                 print(f"test loss : {testloss}")
 
         return testloss, accuracy
+
+
+class RVSGDByTorchWithLoader:
+
+    def __init__(self, lr, train_loader, test_loader, valid_dataset):
+        self.lr = lr
+        self.model = nn.Module()
+        self.train_loeder = train_loader
+        self.test_loeder = test_loader
+        self.valid_dataset = valid_dataset
+
+    def learn(self, k):
+        n = len(self.train_loeder)
+        sep_num = n // k
+        model_list = []
+
+        for i in tqdm(range(k)):
+            model = models.CNN()
+            model_candidate = SGDByTorch.SGDFromTrainLorder(lr=self.lr)
+            loss_type = nn.CrossEntropyLoss()
+            result_model = model_candidate.learn(train_loader=self.train_loeder, model=model, loss_type=loss_type,
+                                                 )
+
+            model_list.append(result_model)
+
+        return model_list
+
+    def valid(self, model_candidates, k):
+
+        valid_loss_store = []
+        sep_num = len(self.valid_dataset) // k
+        loss_type = nn.CrossEntropyLoss()
+
+        for j in range(k):
+            tmp_loss = []
+            val_loader = torch.utils.data.DataLoader(self.valid_dataset, batch_size=sep_num, shuffle=True)
+            for i in val_loader:
+                data, target = i
+                output = model_candidates[j](data)
+                loss = loss_type(output, target)
+                tmp_loss.append(loss.item())
+            # print(tmp_loss)
+            valid_loss_store.append(valid.median_of_means(seq=np.array(tmp_loss), n_blocks=3))
+
+        selected_index = np.argmin(valid_loss_store)
+
+        return model_candidates[selected_index]
+
+    def run_RVSGD(self, k):
+        model_candidates = self.learn(k)
+        result_model = self.valid(model_candidates=model_candidates, k=k)
+        return result_model
+
+    def prediction(self, model):
+
+        accuracy = SGDByTorch.SGDFromTrainLorder(lr=self.lr).test_accuracy(test_loader=self.test_loeder,model=model)
+        return accuracy

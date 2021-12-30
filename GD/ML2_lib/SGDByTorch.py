@@ -172,7 +172,7 @@ class SGDFromTrainLorder:
         self.model = nn.Module()
 
     def learn(self, train_loader, model, loss_type, early_stopping=0):
-        for j in train_loader:
+        for j in tqdm(train_loader):
             inputs, labels = j
             optimizer = optim.SGD(model.parameters(), lr=self.lr)
             optimizer.zero_grad()
@@ -192,14 +192,14 @@ class SGDFromTrainLorder:
 
         return model
 
-    def test_accuracy(self,test_loader):
+    def test_accuracy(self,test_loader,model):
         correct = 0
         total = 0
         # 勾配を記憶せず（学習せずに）に計算を行う
         with torch.no_grad():
             for data in test_loader:
                 images, labels = data
-                outputs = self.model(images)
+                outputs = model(images)
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
