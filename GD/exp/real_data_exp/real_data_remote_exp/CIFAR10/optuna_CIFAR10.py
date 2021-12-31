@@ -33,8 +33,8 @@ if __name__ == "__main__":
 
     def f(lr):
         hoge = SGDByTorch.SGDFromTrainLorder(lr=lr)
-        hoge.learn(train_loader=trainloader, model=model, loss_type=loss_type)
-        acc = hoge.test_accuracy(test_loader=testloader)
+        result_model = hoge.learn(train_loader=trainloader, model=model, loss_type=loss_type)
+        acc = hoge.test_accuracy(test_loader=testloader, model=result_model)
         return acc
 
 

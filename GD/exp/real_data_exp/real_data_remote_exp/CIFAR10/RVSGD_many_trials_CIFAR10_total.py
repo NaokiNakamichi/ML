@@ -79,3 +79,4 @@ if __name__ == "__main__":
 
         result_accuracy_pd.to_csv(f"result_/RVSGD_CIFAR10_trial_{n_trials}_{now}_model_CNN_lr_{lr}.csv",
                                   index=False)
+        print("csv is created")
