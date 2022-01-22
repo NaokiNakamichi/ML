@@ -129,6 +129,8 @@ def w_value_2d_k_candidates_contour(f, core_store, _t_max, selected_index, title
 def multiple_w_value_2d_k_candidates_contour(f, k_list, k_list_core_store, _t_max, k_selected_index,
                                              title="w trajectory", folder_title="",
                                              trajectory=True, levels=None, saving_png=False):
+    font_dict = dict(size=16)
+
     if saving_png:
         new_dir_path_recursive = folder_title
         for i, core_store in enumerate(k_list_core_store):
@@ -172,7 +174,11 @@ def multiple_w_value_2d_k_candidates_contour(f, k_list, k_list_core_store, _t_ma
             plt.plot(*core_store[k_selected_index[i]][-1], "x", markersize=10, label=f"selected", color="r")
             plt.plot(*w_star, 'r*', markersize=12, label="optimal")
             plt.plot(*core_store[0][0], 'rs', markersize=5, label="w_init")
-            plt.title(f"k = {k_list[i]} {title}")
+            plt.title(f"k = {k_list[i]} w trajectory",fontdict=font_dict)
+            plt.xlabel(f"w_1",fontdict=font_dict)
+            plt.ylabel(f"w_2", fontdict=font_dict)
+            plt.xticks(fontsize=12)
+            plt.yticks(fontsize=12)
             plt.legend()
             plt.savefig(f"{new_dir_path_recursive}/k_{k_list[i]}{title}.png")
             plt.show()
@@ -227,31 +233,40 @@ def multiple_w_value_2d_k_candidates_contour(f, k_list, k_list_core_store, _t_ma
         plt.show()
 
 
-def box_plot_k(result, k_list, k_string, title, folder_title="", saving_png=False):
+def box_plot_k(result, k_list, k_string, title, folder_title="", saving_png=False, file_name="hoge", outliers = True):
     fdic = {
         "size": 20,
     }
 
     columns = k_string
-    fig = plt.figure(figsize=(10.0, 8.0))
+    fig = plt.figure(figsize=(8.0, 6.0))
     ax1 = fig.add_subplot(111)
 
     if len(result.shape) == 2:
         if result.shape[1] == len(k_list):
 
-            ax1.boxplot(result)
+            if outliers:
+                ax1.boxplot(result)
+            else:
+                ax1.boxplot(result,sym="")
         else:
-            ax1.boxplot(result[:, k_list])
+            if outliers:
+                ax1.boxplot(result[:, k_list])
+            else:
+                ax1.boxplot(result[:, k_list],sym="")
+
     else:
         raise ValueError("変数resultの形を確認してください")
 
     ax1.set_xticklabels(columns, fontsize=20)
-    ax1.set_title(f'{title}', fontsize=10)
-    ax1.set_xlabel('k', fontdict=fdic)
+    ax1.tick_params(labelsize = 20)
+    ax1.set_title(f'{title}', fontsize=20)
+    ax1.set_xlabel('division number', fontdict=fdic)
+    ax1.set_ylabel('excess risk',fontdict=fdic)
     if saving_png:
         new_dir_path_recursive = folder_title
 
-        plt.savefig(f"{new_dir_path_recursive}/{title}.png")
+        plt.savefig(f"{new_dir_path_recursive}/{file_name}.png")
 
     plt.show()
 

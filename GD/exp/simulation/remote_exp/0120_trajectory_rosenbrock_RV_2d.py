@@ -9,13 +9,15 @@ from tqdm import tqdm
 if __name__ == "__main__":
 
     d = 2
-    lr = 0.001
+    # [2,2]では0.001
+    lr = 0.0001
     c = 1
     n = 10000
     k_list = [1, 2, 4, 5, 10, 20]
 
     # ノイズの種類（勾配）
-    noise_type_list = ["lognormal", "normal", "student_t"]
+    # noise_type_list = ["lognormal", "normal", "student_t"]
+    noise_type_list = ["lognormal"]
 
     E_var = 1.75
 
@@ -23,7 +25,8 @@ if __name__ == "__main__":
     # ノイズの分散（勾配）
     def noise_var(noise_type):
         if noise_type == "lognormal":
-            return [1.2, 1.75, 1.9]
+            # return [1.2, 1.75, 1.9]
+            return [1.75]
         elif noise_type == "normal":
             return [1.9]
         elif noise_type == "student_t":
@@ -41,8 +44,8 @@ if __name__ == "__main__":
     w_init = np.array([2, 2])
 
     # 初期値
-    w_init_list_0 = [-4, -2, 0, 2, 4]
-    w_init_list_1 = [-4, -2, 0, 2, 4]
+    w_init_list_0 = [3]
+    w_init_list_1 = [3]
 
     k_string = [f"{i + 1}" for i in k_list]
 
