@@ -13,20 +13,24 @@ if __name__ == "__main__":
     args = sys.argv
     d = 2
     trial_num = 100
-    lr = 0.001
-
+    # [2,2]では0.001
+    lr = 0.0007
     c = 1
-
     n = 10000
-    k_list = [0, 1, 3, 4, 9, 19]
+    k_list = [1, 2, 4, 5, 10, 20]
+
     # ノイズの種類（勾配）
+    # noise_type_list = ["lognormal", "normal", "student_t"]
     noise_type_list = ["lognormal"]
 
     E_var = 1.75
+
+
     # ノイズの分散（勾配）
     def noise_var(noise_type):
         if noise_type == "lognormal":
-            return [1.2, 1.75, 1.9]
+            # return [1.2, 1.75, 1.9]
+            return [1.75]
         elif noise_type == "normal":
             return [1.9]
         elif noise_type == "student_t":
@@ -36,7 +40,7 @@ if __name__ == "__main__":
 
 
     # 検証時に加える関数値にノイズの種類
-    noise_type_f = "lognormal"
+    noise_type_f = "normal"
     f_E_var = 1.75
 
     # 初期値

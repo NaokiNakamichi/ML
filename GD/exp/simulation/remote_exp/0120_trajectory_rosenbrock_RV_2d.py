@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     d = 2
     # [2,2]では0.001
-    lr = 0.0001
+    lr = 0.0007
     c = 1
     n = 10000
     k_list = [1, 2, 4, 5, 10, 20]
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
 
     # 検証時に加える関数値にノイズの種類
-    noise_type_f = "lognormal"
+    noise_type_f = "normal"
     f_E_var = 1.75
 
     noise = "lognormal"
