@@ -44,8 +44,8 @@ if __name__ == "__main__":
     f_E_var = 1.75
 
     # 初期値
-    w_init_list_0 = [-4, -2, 0, 2, 4]
-    w_init_list_1 = [-4, -2, 0, 2, 4]
+    w_init_list_0 = [3]
+    w_init_list_1 = [3]
 
     k_string = [f"{i + 1}" for i in k_list]
 
