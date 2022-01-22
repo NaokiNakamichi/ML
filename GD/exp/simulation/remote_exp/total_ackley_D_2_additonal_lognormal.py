@@ -20,24 +20,26 @@ if __name__ == "__main__":
     n = 10000
     k_list = [0, 1, 3, 4, 9, 19]
     # ノイズの種類（勾配）
-    noise_type_list = ["lognormal"]
+    noise_type_list = ["lognormal", "normal"]
 
     # ノイズの分散（勾配）
     def noise_var(noise_type):
         if noise_type == "lognormal":
-            return [0.5, 0.7, 0.9]
+            return [0.7]
+        if noise_type == "normal":
+            return [2.2]
 
         else:
             raise ValueError("lognormalかnormalかsutdent_tで")
 
 
     # 検証時に加える関数値にノイズの種類
-    noise_type_f = "lognormal"
+    noise_type_f = "normal"
     f_E_var = 1.2
 
     # 初期値
-    w_init_list_0 = [-5, 5]
-    w_init_list_1 = [-5, 5]
+    w_init_list_0 = [5]
+    w_init_list_1 = [5]
 
     k_string = [f"{i + 1}" for i in k_list]
 
