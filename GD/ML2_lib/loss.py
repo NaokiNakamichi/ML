@@ -241,7 +241,7 @@ class Ellipsoid(LossInit):
         f = 0
         if self.d == 2:
             for i in range(1, self.d + 1):
-                f += (1000 ** ((i - 1) / (self.d - 1)) * w[i - 1]) ** 2
+                f += (10 ** ((i - 1) / (self.d - 1)) * w[i - 1]) ** 2
 
         if self.noise_type_f:
             f += self.generate_noise_f()[0]
