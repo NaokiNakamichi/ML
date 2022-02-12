@@ -129,7 +129,7 @@ def w_value_2d_k_candidates_contour(f, core_store, _t_max, selected_index, title
 def multiple_w_value_2d_k_candidates_contour(f, k_list, k_list_core_store, _t_max, k_selected_index,
                                              title="w trajectory", folder_title="",
                                              trajectory=True, levels=None, saving_png=False):
-    font_dict = dict(size=16)
+    font_dict = dict(size=25)
 
     if saving_png:
         new_dir_path_recursive = folder_title
@@ -169,18 +169,18 @@ def multiple_w_value_2d_k_candidates_contour(f, k_list, k_list_core_store, _t_ma
                                          size=15 - 10 * (i_annotate / dire.shape[0] - 1))
 
             for k, w_store in enumerate(core_store):
-                plt.plot(*w_store[-1], "o", markersize=8, label=f"process {k}", color=cmap(k))
+                plt.plot(*w_store[-1], "o", markersize=20, label=f"process {k}", color=cmap(k))
 
-            plt.plot(*core_store[k_selected_index[i]][-1], "x", markersize=10, label=f"selected", color="r")
-            plt.plot(*w_star, 'r*', markersize=12, label="optimal")
-            plt.plot(*core_store[0][0], 'rs', markersize=5, label="w_init")
-            plt.title(f"k = {k_list[i]} w trajectory",fontdict=font_dict)
+            plt.plot(*core_store[k_selected_index[i]][-1], "x", markersize=20, label=f"selected", color="r")
+            plt.plot(*w_star, 'r*', markersize=20, label="optimal")
+            plt.plot(*core_store[0][0], 'rs', markersize=20, label="w_init")
+            plt.title(f"w trajectory",fontdict=font_dict)
             plt.xlabel(f"w_1",fontdict=font_dict)
             plt.ylabel(f"w_2", fontdict=font_dict)
             plt.xticks(fontsize=12)
             plt.yticks(fontsize=12)
-            plt.legend()
-            plt.savefig(f"{new_dir_path_recursive}/k_{k_list[i]}{title}.png")
+            plt.legend(prop={'size':20},loc='upper left',bbox_to_anchor=(1.05, 1.0),)
+            plt.savefig(f"{new_dir_path_recursive}/k_{k_list[i]}{title}.png", bbox_inches='tight')
             plt.show()
 
 
@@ -235,7 +235,7 @@ def multiple_w_value_2d_k_candidates_contour(f, k_list, k_list_core_store, _t_ma
 
 def box_plot_k(result, k_list, k_string, title, folder_title="", saving_png=False, file_name="hoge", outliers = True):
     fdic = {
-        "size": 20,
+        "size": 30,
     }
 
     columns = k_string
@@ -258,9 +258,9 @@ def box_plot_k(result, k_list, k_string, title, folder_title="", saving_png=Fals
     else:
         raise ValueError("変数resultの形を確認してください")
 
-    ax1.set_xticklabels(columns, fontsize=20)
-    ax1.tick_params(labelsize = 20)
-    ax1.set_title(f'{title}', fontsize=20)
+    ax1.set_xticklabels(columns, fontsize=30)
+    ax1.tick_params(labelsize = 30)
+    ax1.set_title(f'{title}', fontsize=30)
     ax1.set_xlabel('division number', fontdict=fdic)
     ax1.set_ylabel('excess risk',fontdict=fdic)
     if saving_png:
